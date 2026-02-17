@@ -70,4 +70,14 @@ public class CollegeService {
         return collegeRepository.save(existingCollege);
     }
 
+
+    /* Delete college by name */
+    public String deleteCollegeByName(String name) {
+        College existingCollege = collegeRepository.findByName(name)
+                .orElseThrow(() -> new RuntimeException(
+                        "College with name " + name + " not found"));
+        collegeRepository.delete(existingCollege);
+        return "College with name " + name + " has been deleted successfully.";
+    }
+
 }

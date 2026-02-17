@@ -45,5 +45,12 @@ public class CollegeController {
         return ResponseEntity.ok(updated);
     }
 
+    /* Delete college by name */
+    @DeleteMapping("/api/deleteCollegeByName/{name}")
+    public ResponseEntity<String> deleteCollegeByName(@PathVariable String name) {
+        String result = collegeService.deleteCollegeByName(name);
+        return ResponseEntity.ok(result);
+    }
+
 
 }
