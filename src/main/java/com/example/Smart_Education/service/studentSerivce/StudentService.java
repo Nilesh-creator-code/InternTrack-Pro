@@ -14,13 +14,13 @@ public class StudentService {
 /*     MYSQL repository
  */    @Autowired
     private UserRepository userRepository;
-    
+
     //MongoDB repository
     @Autowired
     private StudentRepository studentRepository;
 
 
-    //Add Student 
+    //Add Student
     public User addStudentUser(User user) {
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new RuntimeException("Email already exists: " + user.getEmail());
@@ -31,14 +31,11 @@ public class StudentService {
         return userRepository.save(user); // Save the user to MySQL
     }
 
+
     //Get Student by ID
     public User getStudentById(Long id) {
         return userRepository.findById(id).orElseThrow(() -> new RuntimeException("Student not found with ID: " + id)); // Retrieve the user by ID from MySQL
     }
-
-
-
-
 
 
 /*     Mysql Database Service

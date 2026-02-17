@@ -28,8 +28,10 @@ public class College {
     private String contactNumber;
     private String email;
     private String address;
+    private String aboutUs;
+    private String description;
 
     @OneToMany(mappedBy = "college")
     private List<Course> courses;
-
+    
 }

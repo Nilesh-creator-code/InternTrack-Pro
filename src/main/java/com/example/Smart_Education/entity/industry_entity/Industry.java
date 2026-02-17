@@ -20,6 +20,10 @@ public class Industry {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String code; // e.g., IT, Finance, Healthcare
+    private String title;
+    private String aboutUs;
+    private String description;
     private String name;
     private String contactNumber;
     private String email;

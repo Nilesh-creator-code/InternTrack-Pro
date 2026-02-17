@@ -1,12 +1,10 @@
 package com.example.Smart_Education.entity;
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.ManyToAny;
 
 import com.example.Smart_Education.entity.college_entity.College;
 import com.example.Smart_Education.entity.industry_entity.Industry;
 
-import jakarta.annotation.Generated;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,6 +25,8 @@ public class Course {
     private String code; // e.g., CS101
 
     private String name; // e.g., Introduction to Computer Science
+    private String duration;
+    private String fees;
     private String description;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -36,5 +36,5 @@ public class Course {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "industry_id")
     private Industry industry;
-
+    
 }

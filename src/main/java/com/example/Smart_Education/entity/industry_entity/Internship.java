@@ -23,6 +23,13 @@ public class Internship {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String companyName;
+    private String Name;
+    private String email;
+    private String phone;
+    private String location;
+    private String stipend;
+    private String requirements;
     private String title;
     private String description;
     private String domain;
