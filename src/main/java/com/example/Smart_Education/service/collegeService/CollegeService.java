@@ -40,4 +40,34 @@ public class CollegeService {
                 .orElseThrow(() -> new RuntimeException("No colleges found"));  
     }
 
+    /* Update college */
+    public College updatCollege(String name, College updatedCollege) {
+
+        //First find the college exist or not
+        College existingCollege = collegeRepository.findByName(name)
+                .orElseThrow(() -> new RuntimeException(
+                        "College with name " + name + " not found"));
+
+
+        //I will check if new name already exists in another college
+        if (collegeRepository.existsByNameAndIdNot(updatedCollege.getName(), existingCollege.getId())) {
+            throw new RuntimeException("Name already in use");
+        }
+
+        //I will check if new email already exists in another college
+        if (collegeRepository.existsByEmailAndIdNot(updatedCollege.getEmail(), existingCollege.getId())) {
+            throw new RuntimeException("Email already in use");
+        }
+
+//        existingCollege.setName(updatedCollege.getName());
+
+        existingCollege.setContactNumber(updatedCollege.getContactNumber());
+        existingCollege.setEmail(updatedCollege.getEmail());
+        existingCollege.setAddress(updatedCollege.getAddress());
+        existingCollege.setAboutUs(updatedCollege.getAboutUs());
+        existingCollege.setDescription(updatedCollege.getDescription());
+
+        return collegeRepository.save(existingCollege);
+    }
+
 }

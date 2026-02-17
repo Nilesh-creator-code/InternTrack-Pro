@@ -38,4 +38,12 @@ public class CollegeController {
         return ResponseEntity.ok(colleges);
     }
 
+    /* Update college */
+    @PutMapping("/api/updateCollege/{name}")
+    public ResponseEntity<College> updateCollege(@PathVariable String name, @RequestBody College updatedCollege) {
+        College updated = collegeService.updatCollege(name, updatedCollege);
+        return ResponseEntity.ok(updated);
+    }
+
+
 }

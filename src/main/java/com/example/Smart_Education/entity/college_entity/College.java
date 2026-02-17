@@ -25,8 +25,9 @@ public class College {
     private Long id;
 
     private String name;
-    private String contactNumber;
     private String email;
+    private String password;
+    private String contactNumber;
     private String address;
     private String aboutUs;
     private String description;
