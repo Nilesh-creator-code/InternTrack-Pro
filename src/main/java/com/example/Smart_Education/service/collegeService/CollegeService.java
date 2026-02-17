@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 
 import com.example.Smart_Education.repository.mysql.CollegeRepository;
 
+import java.lang.foreign.Linker.Option;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -31,5 +33,11 @@ public class CollegeService {
                 .orElseThrow(() -> new RuntimeException(
                         "College with name " + name + " not found"));
     }
-  
+
+    /* Fetch all Colleges */
+    public List<College> getAllColleges() {
+        return Optional.of(collegeRepository.findAll())
+                .orElseThrow(() -> new RuntimeException("No colleges found"));  
+    }
+
 }

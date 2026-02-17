@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("college-controller")
 public class CollegeController {
@@ -29,6 +31,11 @@ public class CollegeController {
         return ResponseEntity.ok(college);
     }
 
-    
+    /* Get all colleges */
+    @GetMapping("/api/getAllColleges")
+    public ResponseEntity<List<College>> getAllColleges() {
+        List<College> colleges = collegeService.getAllColleges();
+        return ResponseEntity.ok(colleges);
+    }
 
 }
