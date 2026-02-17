@@ -4,10 +4,7 @@ import com.example.Smart_Education.entity.college_entity.College;
 import com.example.Smart_Education.service.collegeService.CollegeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("college-controller")
@@ -24,5 +21,14 @@ public class CollegeController {
         System.out.println(college);
         return ResponseEntity.ok(savedCollege);
     }
+
+    /* Get college by name */
+    @GetMapping("/api/getCollegeByName")
+    public ResponseEntity<College> getCollegeByName(@RequestParam String name) {
+        College college = collegeService.getCollegeByName(name);
+        return ResponseEntity.ok(college);
+    }
+
+    
 
 }

@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 
 import com.example.Smart_Education.repository.mysql.CollegeRepository;
 
+import java.util.Optional;
+
 @Service
 public class CollegeService {
 
@@ -21,6 +23,13 @@ public class CollegeService {
             throw new RuntimeException("College with the same email already exists.");
         }
         return collegeRepository.save(college);
+    }
+
+    /* Fetch a College by name */
+    public College getCollegeByName(String name) {
+        return collegeRepository.findByName(name)
+                .orElseThrow(() -> new RuntimeException(
+                        "College with name " + name + " not found"));
     }
   
 }
