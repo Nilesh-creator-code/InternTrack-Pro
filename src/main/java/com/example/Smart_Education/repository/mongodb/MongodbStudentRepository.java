@@ -8,6 +8,6 @@ import com.example.Smart_Education.entity.student_entity.StudentReport;
 
 /* MongoDB Repository */ 
 @Repository
-public interface StudentRepository extends MongoRepository<StudentReport, String>{
+public interface MongodbStudentRepository extends MongoRepository<StudentReport, String>{
     
 }

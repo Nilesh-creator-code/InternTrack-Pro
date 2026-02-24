@@ -2,6 +2,7 @@ package com.example.Smart_Education.entity.student_entity;
 
 import java.time.LocalDate;
 
+import com.example.Smart_Education.entity.User;
 import com.example.Smart_Education.entity.industry_entity.Internship;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

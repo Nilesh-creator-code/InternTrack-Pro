@@ -1,5 +1,6 @@
 package com.example.Smart_Education.entity;
 
+import com.example.Smart_Education.entity.student_entity.Enrollment;
 import jakarta.persistence.*;
 
 import com.example.Smart_Education.entity.college_entity.College;
@@ -10,6 +11,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -28,6 +31,9 @@ public class Course {
     private String duration;
     private String fees;
     private String description;
+
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
+    private List<Enrollment> enrollments;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "college_id")

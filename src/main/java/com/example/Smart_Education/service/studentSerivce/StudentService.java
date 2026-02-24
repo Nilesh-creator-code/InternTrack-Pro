@@ -1,48 +1,95 @@
 package com.example.Smart_Education.service.studentSerivce;
 
-import com.example.Smart_Education.entity.student_entity.StudentReport;
-import com.example.Smart_Education.entity.student_entity.User;
-import com.example.Smart_Education.repository.mongodb.StudentRepository;
+import com.example.Smart_Education.DTOs.StudentRegistrationDTO;
+import com.example.Smart_Education.entity.Role;
+import com.example.Smart_Education.entity.User;
+import com.example.Smart_Education.entity.college_entity.College;
+import com.example.Smart_Education.entity.student_entity.Student;
+import com.example.Smart_Education.repository.mongodb.MongodbStudentRepository;
+import com.example.Smart_Education.repository.mysql.CollegeRepository;
+import com.example.Smart_Education.repository.mysql.StudentRepository;
 import com.example.Smart_Education.repository.mysql.UserRepository;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class StudentService {
 
+
 /*     MYSQL repository
- */    @Autowired
+ */ @Autowired
     private UserRepository userRepository;
 
     //MongoDB repository
     @Autowired
+    private MongodbStudentRepository mongodbStudentRepository;
+
+    @Autowired
     private StudentRepository studentRepository;
 
+    @Autowired
+    private CollegeRepository collegeRepository;
 
-    //Add Student
-    public User addStudentUser(User user) {
-        if (userRepository.existsByEmail(user.getEmail())) {
-            throw new RuntimeException("Email already exists: " + user.getEmail());
+    
+    /* Create Student (User + Student profile) */
+    public Student createStudent(Student student) {
+        //First I will check if email already exists in User table
+        if (userRepository.existsByEmail(student.getUser().getEmail())) {
+            throw new RuntimeException("Email already in use");
         }
-        if (userRepository.existsByName(user.getName())) {
-            throw new RuntimeException("Name already exists: " + user.getName());
-        }
-        return userRepository.save(user); // Save the user to MySQL
-    }
 
+        //Set role automatically to STUDENT
+        student.getUser().setRole(Role.STUDENT);
+        //Save the User entity first
+        User savedUser = userRepository.save(student.getUser());
 
-    //Get Student by ID
-    public User getStudentById(Long id) {
-        return userRepository.findById(id).orElseThrow(() -> new RuntimeException("Student not found with ID: " + id)); // Retrieve the user by ID from MySQL
-    }
-
-
-/*     Mysql Database Service
- */    public StudentReport addStudentReport(StudentReport studentReport) {
-        studentRepository.save(studentReport); // Save the report to MongoDB
-        return studentReport; // Return the saved report (with an ID if generated)
+        //Attach the saved User to the Student entity
+        student.setUser(savedUser);
+        
+        //Save the Student entity
+        return studentRepository.save(student);
     }
     
+
+    /* Get Student by id */
+    public Student getStudentById(Long id) {
+        return studentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Student with id " + id + " not found"));
+    }
+
+    /* Get all students */
+    public List<Student> getAllStudents() {
+        return studentRepository.findAll();
+    }
+
+    /* Update student */
+    public Student updateStudent(Long id, Student updatedStudent) {
+        Student existingStudent = studentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Student with id " + id + " not found"));
+
+        // Update fields
+        existingStudent.setName(updatedStudent.getName());
+        existingStudent.setDepartment(updatedStudent.getDepartment());
+        existingStudent.setCollege(updatedStudent.getCollege());
+
+        // 🔥 Update contact number from User
+        if (updatedStudent.getUser() != null) {
+            existingStudent.getUser().setContactNumber(
+                    updatedStudent.getUser().getContactNumber()
+            );
+        }
+
+        return studentRepository.save(existingStudent);
+    }
+
+    /* Delete student */
+    public String deleteStudent(Long id) {
+        studentRepository.deleteById(id);
+        return "Student deleted successfully";
+    }
 
 }

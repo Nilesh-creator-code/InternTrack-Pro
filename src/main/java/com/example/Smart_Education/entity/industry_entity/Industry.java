@@ -1,9 +1,10 @@
 package com.example.Smart_Education.entity.industry_entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.example.Smart_Education.entity.User;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,14 +21,21 @@ public class Industry {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Name is required")
+    private String name;
+
     private String code; // e.g., IT, Finance, Healthcare
     private String title;
     private String aboutUs;
     private String description;
-    private String name;
+    
+    @NotBlank(message = "Contact number is required")
     private String contactNumber;
-    private String email;
     private String address;
+
+    @OneToOne
+    @JoinColumn(name = "user_id", unique = true)
+    private User user;
 
     
 }

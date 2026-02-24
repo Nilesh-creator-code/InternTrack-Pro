@@ -16,13 +16,6 @@ public class CollegeController {
     @Autowired
     private CollegeService collegeService;
 
-/*     Add College  */
-    @PostMapping("/api/addCollege")
-    public ResponseEntity<College> addCollege(@RequestBody College college) {
-        College savedCollege = collegeService.addCollege(college);
-        System.out.println(college);
-        return ResponseEntity.ok(savedCollege);
-    }
 
     /* Get college by name */
     @GetMapping("/api/getCollegeByName")
@@ -38,12 +31,6 @@ public class CollegeController {
         return ResponseEntity.ok(colleges);
     }
 
-    /* Update college */
-    @PutMapping("/api/updateCollege/{name}")
-    public ResponseEntity<College> updateCollege(@PathVariable String name, @RequestBody College updatedCollege) {
-        College updated = collegeService.updatCollege(name, updatedCollege);
-        return ResponseEntity.ok(updated);
-    }
 
     /* Delete college by name */
     @DeleteMapping("/api/deleteCollegeByName/{name}")
