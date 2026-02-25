@@ -6,10 +6,7 @@ import com.example.Smart_Education.DTOs.LoginRequest;
 import com.example.Smart_Education.entity.student_entity.Student;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.example.Smart_Education.DTOs.StudentRegistrationDTO;
 import com.example.Smart_Education.service.authService.AuthService;
 
@@ -34,6 +31,27 @@ public class AuthController {
             @RequestBody LoginRequest request) {
 
         return ResponseEntity.ok(authService.login(request));
+    }
+
+    //For reseting the password through the otp
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestParam String email) {
+        authService.forgotPassword(email);
+        return ResponseEntity.ok("OTP sent to email");
+    }
+
+    @PostMapping("/verify-otp")
+    public ResponseEntity<?> verifyOtp(@RequestParam String email,
+                                       @RequestParam String otp) {
+        authService.verifyOtp(email, otp);
+        return ResponseEntity.ok("OTP verified");
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestParam String email,
+                                           @RequestParam String newPassword) {
+        authService.resetPassword(email, newPassword);
+        return ResponseEntity.ok("Password updated successfully");
     }
 
 

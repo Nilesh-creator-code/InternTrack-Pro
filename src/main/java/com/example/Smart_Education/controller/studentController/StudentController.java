@@ -24,7 +24,6 @@ public class StudentController {
     }
 
 
-
     /* Create student */
     @PostMapping
     @RequestMapping("/add-student")

@@ -5,13 +5,17 @@ import com.example.Smart_Education.DTOs.LoginRequest;
 import com.example.Smart_Education.DTOs.StudentRegistrationDTO;
 import com.example.Smart_Education.config.JwtService;
 import com.example.Smart_Education.entity.EducationStatus;
+import com.example.Smart_Education.entity.OTP.PasswordResetOtp;
 import com.example.Smart_Education.entity.Role;
 import com.example.Smart_Education.entity.User;
 import com.example.Smart_Education.entity.college_entity.College;
 import com.example.Smart_Education.entity.student_entity.Student;
 import com.example.Smart_Education.repository.mysql.CollegeRepository;
+import com.example.Smart_Education.repository.mysql.PasswordResetOtpRepository;
 import com.example.Smart_Education.repository.mysql.StudentRepository;
 import com.example.Smart_Education.repository.mysql.UserRepository;
+import com.example.Smart_Education.service.mailService.EmailService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,6 +23,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.Random;
 
 
 @Service
@@ -38,6 +44,10 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final CustomUserDetailsService userDetailsService;
+
+    //For forgetting the password
+    private final PasswordResetOtpRepository otpRepository;
+    private final EmailService emailService;
 
 
     //    For the registration of the student
@@ -109,5 +119,67 @@ public class AuthService {
 
         return new AuthResponse(token);
     }
+
+    //For forgetting the password
+    @Transactional
+    public void forgotPassword(String email) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Email not found"));
+
+        // 🔥 DELETE old OTP first
+        otpRepository.deleteByEmail(email);
+
+        String otp = String.valueOf(
+                new Random().nextInt(900000) + 100000
+        );
+
+        PasswordResetOtp resetOtp = PasswordResetOtp.builder()
+                .email(email)
+                .otp(otp)
+                .expiryTime(LocalDateTime.now().plusMinutes(5))
+                .verified(false)
+                .build();
+
+        otpRepository.save(resetOtp);
+
+        emailService.sendOtp(email, otp);
+    }
+
+
+    //For verifying the OTP
+    public void verifyOtp(String email, String otp) {
+
+        PasswordResetOtp resetOtp = otpRepository.findTopByEmailOrderByIdDesc(email)
+                .orElseThrow(() -> new RuntimeException("OTP not found"));
+
+        if (!resetOtp.getOtp().equals(otp))
+            throw new RuntimeException("Invalid OTP");
+
+        if (resetOtp.getExpiryTime().isBefore(LocalDateTime.now()))
+            throw new RuntimeException("OTP expired");
+
+        resetOtp.setVerified(true);
+        otpRepository.save(resetOtp);
+    }
+
+    //Reset Password
+    public void resetPassword(String email, String newPassword) {
+
+        PasswordResetOtp resetOtp = otpRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("OTP not found"));
+
+        if (!resetOtp.isVerified())
+            throw new RuntimeException("OTP not verified");
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+
+        otpRepository.delete(resetOtp);
+    }
+
 
 }
