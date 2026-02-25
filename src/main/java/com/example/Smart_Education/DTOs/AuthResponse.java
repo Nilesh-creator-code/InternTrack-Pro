@@ -1,14 +1,12 @@
 package com.example.Smart_Education.DTOs;
 
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-@Builder
+@AllArgsConstructor
 public class AuthResponse {
 
     private String token;
-    private String email;
-    private String role;
     
 }

@@ -17,6 +17,12 @@ public class StudentController {
     @Autowired
     private StudentService studentService;
 
+// For the debugging and testing
+    @GetMapping("/test-auth")
+    public String testAuth(org.springframework.security.core.Authentication authentication) {
+        return authentication.getAuthorities().toString();
+    }
+
 
 
     /* Create student */

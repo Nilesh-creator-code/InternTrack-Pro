@@ -1,8 +1,8 @@
 package com.example.Smart_Education.DTOs;
 
+
 import com.example.Smart_Education.entity.EducationStatus;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import com.example.Smart_Education.entity.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -31,6 +31,7 @@ public class StudentRegistrationDTO {
     @Size(min = 8, message = "Password must be at least 8 characters long")
     private String password;
 
-    @Enumerated(EnumType.STRING)
+
+    @NotNull(message = "Education status is required")
     private EducationStatus educationStatus;
 }

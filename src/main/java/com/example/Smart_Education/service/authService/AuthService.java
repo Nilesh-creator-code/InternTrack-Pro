@@ -1,6 +1,9 @@
 package com.example.Smart_Education.service.authService;
 
+import com.example.Smart_Education.DTOs.AuthResponse;
+import com.example.Smart_Education.DTOs.LoginRequest;
 import com.example.Smart_Education.DTOs.StudentRegistrationDTO;
+import com.example.Smart_Education.config.JwtService;
 import com.example.Smart_Education.entity.EducationStatus;
 import com.example.Smart_Education.entity.Role;
 import com.example.Smart_Education.entity.User;
@@ -10,9 +13,12 @@ import com.example.Smart_Education.repository.mysql.CollegeRepository;
 import com.example.Smart_Education.repository.mysql.StudentRepository;
 import com.example.Smart_Education.repository.mysql.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 
 
 @Service
@@ -29,6 +35,11 @@ public class AuthService {
     private final CollegeRepository collegeRepository;
 
 
+    private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
+    private final CustomUserDetailsService userDetailsService;
+
+
     //    For the registration of the student
     public Student registerStudent(StudentRegistrationDTO dto) {
 
@@ -37,6 +48,8 @@ public class AuthService {
         if (userRepository.existsByEmail(dto.getEmail())) {
             throw new RuntimeException("Email already registered");
         }
+
+
 
         // 1️⃣ Validate Education Status
         if (dto.getEducationStatus() == null) {
@@ -76,6 +89,25 @@ public class AuthService {
                 .build();
 
         return studentRepository.save(student);
+    }
+
+
+    //For login the student
+    public AuthResponse login(LoginRequest request) {
+
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(),
+                        request.getPassword()
+                )
+        );
+
+        UserDetails userDetails =
+                userDetailsService.loadUserByUsername(request.getEmail());
+
+        String token = jwtService.generateToken(userDetails);
+
+        return new AuthResponse(token);
     }
 
 }

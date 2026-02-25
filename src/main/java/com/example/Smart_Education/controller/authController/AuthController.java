@@ -1,6 +1,8 @@
 package com.example.Smart_Education.controller.authController;
 
 
+import com.example.Smart_Education.DTOs.AuthResponse;
+import com.example.Smart_Education.DTOs.LoginRequest;
 import com.example.Smart_Education.entity.student_entity.Student;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,9 +21,20 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
+
     @PostMapping("/register")
     public ResponseEntity<Student> register(@RequestBody StudentRegistrationDTO dto) {
         Student student = authService.registerStudent(dto);
         return ResponseEntity.ok(student);
     }
+
+
+    @PostMapping("/login")
+    public ResponseEntity<AuthResponse> login(
+            @RequestBody LoginRequest request) {
+
+        return ResponseEntity.ok(authService.login(request));
+    }
+
+
 }

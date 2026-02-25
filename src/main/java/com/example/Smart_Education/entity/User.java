@@ -3,6 +3,7 @@ package com.example.Smart_Education.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
@@ -31,6 +32,7 @@ public class User {
     @NotBlank(message = "Contact number is required")
     private String contactNumber;
 
+    @NotNull(message = "Role is required")
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role; // e.g., "STUDENT", "TEACHER", "INDUSTRY"
