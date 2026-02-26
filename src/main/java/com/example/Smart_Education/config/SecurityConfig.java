@@ -29,8 +29,16 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()
+                        // 🔓 Public Auth APIs
+                        .requestMatchers("/api/auth/student**").permitAll()
+                        .requestMatchers("/api/auth/college/**").permitAll()
+
+                        // 🔐 Student Protected APIs
                         .requestMatchers("/api/student-controller/**").hasRole("STUDENT")
+
+                        // 🔐 College Protected APIs
+                        .requestMatchers("/api/college-controller/**").hasRole("COLLEGE")
+
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session ->

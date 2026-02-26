@@ -12,7 +12,7 @@ import com.example.Smart_Education.service.authService.AuthService;
 
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/auth/student")
 public class StudentAuthController {
 
     @Autowired
@@ -41,7 +41,7 @@ public class StudentAuthController {
     @PostMapping("/verify-otp")
     public ResponseEntity<?> verifyOtp(@RequestParam String email,
                                        @RequestParam String otp) {
-        boolean isVerified = authService.verifyOtp(email, otp);
+        boolean isVerified = authService.verifyOtpForStudent(email, otp);
         if (isVerified) {
             return ResponseEntity.ok("OTP verified");
         } else {

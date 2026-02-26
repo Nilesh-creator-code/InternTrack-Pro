@@ -1,11 +1,13 @@
 package com.example.Smart_Education.service.authService;
 
 import com.example.Smart_Education.DTOs.AuthResponse;
+import com.example.Smart_Education.DTOs.CollegeRegisterDTO;
 import com.example.Smart_Education.DTOs.LoginRequest;
 import com.example.Smart_Education.DTOs.StudentRegistrationDTO;
 import com.example.Smart_Education.config.JwtService;
 import com.example.Smart_Education.entity.EducationStatus;
-import com.example.Smart_Education.entity.OTP.PasswordResetOtp;
+import com.example.Smart_Education.entity.OTP.Otp;
+import com.example.Smart_Education.entity.OTP.OtpVerificationResponse;
 import com.example.Smart_Education.entity.Role;
 import com.example.Smart_Education.entity.User;
 import com.example.Smart_Education.entity.college_entity.College;
@@ -25,6 +27,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Random;
+import java.util.UUID;
 
 
 @Service
@@ -120,7 +123,8 @@ public class AuthService {
         return new AuthResponse(token);
     }
 
-    //For forgetting the password
+
+    //For forgetting the password for student they send the otp
     @Transactional
     public void forgotPassword(String email) {
 
@@ -134,7 +138,7 @@ public class AuthService {
                 new Random().nextInt(900000) + 100000
         );
 
-        PasswordResetOtp resetOtp = PasswordResetOtp.builder()
+        Otp resetOtp = Otp.builder()
                 .email(email)
                 .otp(otp)
                 .expiryTime(LocalDateTime.now().plusMinutes(5))
@@ -146,16 +150,39 @@ public class AuthService {
         emailService.sendOtp(email, otp);
     }
 
+    //For sending otp
+    public void sendOtp(String email) {
+
+        // 1️⃣ Check if email already exists
+        if (userRepository.existsByEmail(email)) {
+            throw new RuntimeException("Email already registered");
+        }
+
+        // 2️⃣ Generate OTP
+        String otpCode = String.valueOf(new Random().nextInt(900000) + 100000);
+
+        // 3️⃣ Save OTP in DB
+        Otp otp = Otp.builder()
+                .email(email)
+                .otp(otpCode)
+                .expiryTime(LocalDateTime.now().plusMinutes(5))
+                .verified(false)
+                .build();
+
+        otpRepository.save(otp);
+
+        // 4️⃣ Send OTP to email (you will implement mail service)
+        emailService.sendOtp(email, otpCode);
+    }
 
     //For verifying the OTP
     @Transactional
-    public boolean verifyOtp(String email, String otp) {
-
-        PasswordResetOtp resetOtp = otpRepository
+    public boolean verifyOtpForStudent(String email, String otp) {
+        Otp resetOtp = otpRepository
                 .findTopByEmailOrderByIdDesc(email)
                 .orElseThrow(() -> new RuntimeException("OTP not found for email: " + email));
 
-        if (resetOtp.isVerified()) {
+        if (resetOtp.isVerified()) {            //this is boolean
             throw new RuntimeException("OTP already verified");
         }
 
@@ -176,7 +203,7 @@ public class AuthService {
     //Reset Password
     public void resetPassword(String email, String newPassword) {
 
-        PasswordResetOtp resetOtp = otpRepository.findByEmail(email)
+        Otp resetOtp = otpRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("OTP not found"));
 
         if (!resetOtp.isVerified())
@@ -191,5 +218,117 @@ public class AuthService {
         otpRepository.delete(resetOtp);
     }
 
+    @Transactional
+    public String sendRegistrationOtp(String email) {
+
+        // Check duplicate email
+        if (userRepository.existsByEmail(email)) {
+            throw new RuntimeException("Email already registered");
+        }
+
+        // Delete old OTP if exists
+        otpRepository.deleteByEmail(email);
+
+        // Generate 6-digit OTP
+        String otpCode = String.valueOf(
+                new Random().nextInt(900000) + 100000
+        );
+
+        Otp otp = Otp.builder()
+                .email(email)
+                .otp(otpCode)
+                .expiryTime(LocalDateTime.now().plusMinutes(5))
+                .verified(false)
+                .build();
+
+        otpRepository.save(otp);
+
+        emailService.sendOtp(email, otpCode);
+
+        return "OTP sent successfully";
+    }
+
+    //They take email and return response with boolean and token
+    @Transactional
+    public OtpVerificationResponse verifyOtp(String email, String otpInput) {
+
+        Otp otp = otpRepository
+                .findTopByEmailOrderByIdDesc(email)
+                .orElseThrow(() ->
+                        new RuntimeException("OTP not found for email: " + email)
+                );
+
+        if (otp.isVerified()) {
+            throw new RuntimeException("OTP already verified");
+        }
+
+        if (!otp.getOtp().equals(otpInput)) {
+            throw new RuntimeException("Invalid OTP");
+        }
+
+        if (otp.getExpiryTime().isBefore(LocalDateTime.now())) {
+            throw new RuntimeException("OTP has expired");
+        }
+
+        // 🔐 Generate secure verification token
+        String verificationToken = UUID.randomUUID().toString();
+
+        otp.setVerified(true);
+        otp.setVerificationToken(verificationToken);
+
+        otpRepository.save(otp);
+
+        return new OtpVerificationResponse(true, verificationToken);
+    }
+
+
+    //For the college registration
+    public String registerCollege(CollegeRegisterDTO dto) {
+
+        if (userRepository.existsByEmail(dto.getEmail())) {
+            throw new RuntimeException("Email already registered");
+        }
+
+        Otp otp = otpRepository
+                .findTopByEmailOrderByIdDesc(dto.getEmail())
+                .orElseThrow(() ->
+                        new RuntimeException("Email not verified")
+                );
+
+        // 🔐 SECURITY CHECK
+        if (!otp.isVerified()
+                || otp.getVerificationToken() == null
+                || !otp.getVerificationToken().equals(dto.getVerificationToken())) {
+
+            throw new RuntimeException("Invalid verification token");
+        }
+
+        // Create User
+        User user = User.builder()
+                .email(dto.getEmail())
+                .password(passwordEncoder.encode(dto.getPassword()))
+                .contactNumber(dto.getUserContactNumber())
+                .role(Role.COLLEGE)
+                .build();
+
+        userRepository.save(user);
+
+        // Create College
+        College college = College.builder()
+                .name(dto.getName())
+                .contactNumber(dto.getCollegeContactNumber())
+                .address(dto.getAddress())
+                .aboutUs(dto.getAboutUs())
+                .description(dto.getDescription())
+                .user(user)
+                .build();
+
+        collegeRepository.save(college);
+
+        // 🔥 Delete OTP after successful registration
+        otpRepository.delete(otp);
+
+        return "College registered successfully";
+    }
 
 }

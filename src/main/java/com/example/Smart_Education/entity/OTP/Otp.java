@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PasswordResetOtp {
+public class Otp {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,4 +27,6 @@ public class PasswordResetOtp {
     private LocalDateTime expiryTime;
 
     private boolean verified;
+
+    private String verificationToken;
 }
