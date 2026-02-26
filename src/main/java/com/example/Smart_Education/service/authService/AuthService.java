@@ -148,19 +148,29 @@ public class AuthService {
 
 
     //For verifying the OTP
-    public void verifyOtp(String email, String otp) {
+    @Transactional
+    public boolean verifyOtp(String email, String otp) {
 
-        PasswordResetOtp resetOtp = otpRepository.findTopByEmailOrderByIdDesc(email)
-                .orElseThrow(() -> new RuntimeException("OTP not found"));
+        PasswordResetOtp resetOtp = otpRepository
+                .findTopByEmailOrderByIdDesc(email)
+                .orElseThrow(() -> new RuntimeException("OTP not found for email: " + email));
 
-        if (!resetOtp.getOtp().equals(otp))
+        if (resetOtp.isVerified()) {
+            throw new RuntimeException("OTP already verified");
+        }
+
+        if (!resetOtp.getOtp().equals(otp)) {
             throw new RuntimeException("Invalid OTP");
+        }
 
-        if (resetOtp.getExpiryTime().isBefore(LocalDateTime.now()))
-            throw new RuntimeException("OTP expired");
+        if (resetOtp.getExpiryTime().isBefore(LocalDateTime.now())) {
+            throw new RuntimeException("OTP has expired");
+        }
 
         resetOtp.setVerified(true);
         otpRepository.save(resetOtp);
+
+        return true;
     }
 
     //Reset Password

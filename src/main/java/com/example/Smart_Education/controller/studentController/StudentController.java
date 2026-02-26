@@ -11,52 +11,56 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("api/student-controller")
+@RequestMapping("/api/students")
 public class StudentController {
 
-    @Autowired
-    private StudentService studentService;
+    private final StudentService studentService;
 
-// For the debugging and testing
-    @GetMapping("/test-auth")
-    public String testAuth(org.springframework.security.core.Authentication authentication) {
-        return authentication.getAuthorities().toString();
+    public StudentController(StudentService studentService) {
+        this.studentService = studentService;
     }
-
 
     /* Create student */
     @PostMapping
-    @RequestMapping("/add-student")
     public ResponseEntity<Student> createStudent(@Valid @RequestBody Student student) {
-        return ResponseEntity.ok(studentService.createStudent(student));
+
+        Student createdStudent = studentService.createStudent(student);
+
+        return ResponseEntity
+                .status(201) // HTTP 201 Created
+                .body(createdStudent);
     }
 
     /* Get student by id */
     @GetMapping("/{id}")
     public ResponseEntity<Student> getStudentById(@PathVariable Long id) {
-        return ResponseEntity.ok(studentService.getStudentById(id));
+
+        Student student = studentService.getStudentById(id);
+        return ResponseEntity.ok(student); // 200 OK
     }
 
     /* Get all students */
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<List<Student>> getAllStudents() {
+
         return ResponseEntity.ok(studentService.getAllStudents());
     }
 
-    
     /* Update student */
     @PutMapping("/{id}")
-    public ResponseEntity<Student> updateStudent(@PathVariable Long id, @Valid @RequestBody Student updatedStudent) {
+    public ResponseEntity<Student> updateStudent(
+            @PathVariable Long id,
+            @Valid @RequestBody Student updatedStudent) {
 
-        return ResponseEntity.ok(studentService.updateStudent(id, updatedStudent));
+        Student student = studentService.updateStudent(id, updatedStudent);
+        return ResponseEntity.ok(student); // 200 OK
     }
 
     /* Delete student */
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteStudent(@PathVariable Long id) {
-        studentService.deleteStudent(id);
-        return ResponseEntity.ok("Student deleted successfully");
-    }
+    public ResponseEntity<Void> deleteStudent(@PathVariable Long id) {
 
-    
+        studentService.deleteStudent(id);
+        return ResponseEntity.noContent().build(); // 204 No Content
+    }
 }
