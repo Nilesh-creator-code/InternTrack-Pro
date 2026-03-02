@@ -1,6 +1,8 @@
 package com.example.Smart_Education.controller.authController;
 
+import com.example.Smart_Education.DTOs.AuthResponse;
 import com.example.Smart_Education.DTOs.CollegeRegisterDTO;
+import com.example.Smart_Education.DTOs.LoginRequest;
 import com.example.Smart_Education.DTOs.OtpRequest;
 import com.example.Smart_Education.entity.OTP.OtpVerificationResponse;
 import com.example.Smart_Education.service.authService.AuthService;
@@ -17,7 +19,7 @@ public class CollegeAuthController {
 
     private final AuthService authService;
 
-    //1 They will sent the otp
+    //1 They will send the otp
     @PostMapping("/send-otp")
     public ResponseEntity<?> sendOtp(@RequestParam String email) {
 
@@ -50,6 +52,18 @@ public class CollegeAuthController {
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
+                .body(response);
+    }
+
+
+    @PostMapping("/login")
+    public ResponseEntity<AuthResponse> login(
+            @Valid @RequestBody LoginRequest request) {
+
+        AuthResponse response = authService.login(request);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
                 .body(response);
     }
 

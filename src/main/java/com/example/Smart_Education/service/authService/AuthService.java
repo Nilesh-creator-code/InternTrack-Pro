@@ -108,6 +108,7 @@ public class AuthService {
     //For login the student
     public AuthResponse login(LoginRequest request) {
 
+        // 1️⃣ Authenticate user (email + password)
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
@@ -115,12 +116,22 @@ public class AuthService {
                 )
         );
 
+        // 2️⃣ Fetch user from DB
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // 3️⃣ Load Spring Security UserDetails
         UserDetails userDetails =
                 userDetailsService.loadUserByUsername(request.getEmail());
 
+        // 4️⃣ Generate JWT Token
         String token = jwtService.generateToken(userDetails);
 
-        return new AuthResponse(token);
+        // 5️⃣ Return token + role
+        return new AuthResponse(
+                token,
+                user.getRole().name()
+        );
     }
 
 

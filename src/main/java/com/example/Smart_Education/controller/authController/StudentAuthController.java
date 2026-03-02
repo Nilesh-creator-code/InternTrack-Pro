@@ -4,6 +4,7 @@ package com.example.Smart_Education.controller.authController;
 import com.example.Smart_Education.DTOs.AuthResponse;
 import com.example.Smart_Education.DTOs.LoginRequest;
 import com.example.Smart_Education.entity.student_entity.Student;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,12 +28,12 @@ public class StudentAuthController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
         AuthResponse response = authService.login(request);
         return ResponseEntity.ok(response);
     }
 
-    //For reseting the password through the otp
+    //For reset the password through the otp
     @PostMapping("/forgot-password")
     public ResponseEntity<?> forgotPassword(@RequestParam String email) {
         authService.forgotPassword(email);
