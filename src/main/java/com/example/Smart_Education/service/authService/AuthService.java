@@ -13,7 +13,7 @@ import com.example.Smart_Education.entity.User;
 import com.example.Smart_Education.entity.college_entity.College;
 import com.example.Smart_Education.entity.student_entity.Student;
 import com.example.Smart_Education.repository.mysql.CollegeRepository;
-import com.example.Smart_Education.repository.mysql.PasswordResetOtpRepository;
+import com.example.Smart_Education.repository.mysql.OtpRepository;
 import com.example.Smart_Education.repository.mysql.StudentRepository;
 import com.example.Smart_Education.repository.mysql.UserRepository;
 import com.example.Smart_Education.service.mailService.EmailService;
@@ -49,7 +49,7 @@ public class AuthService {
     private final CustomUserDetailsService userDetailsService;
 
     //For forgetting the password
-    private final PasswordResetOtpRepository otpRepository;
+    private final OtpRepository otpRepository;
     private final EmailService emailService;
 
 
@@ -142,7 +142,7 @@ public class AuthService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Email not found"));
 
-        // 🔥 DELETE old OTP first
+        // DELETE old OTP first
         otpRepository.deleteByEmail(email);
 
         String otp = String.valueOf(
@@ -154,6 +154,8 @@ public class AuthService {
                 .otp(otp)
                 .expiryTime(LocalDateTime.now().plusMinutes(5))
                 .verified(false)
+                .verificationToken(null)
+                .tokenExpiryTime(null)
                 .build();
 
         otpRepository.save(resetOtp);
@@ -186,46 +188,34 @@ public class AuthService {
         emailService.sendOtp(email, otpCode);
     }
 
-    //For verifying the OTP
-    @Transactional
-    public boolean verifyOtpForStudent(String email, String otp) {
-        Otp resetOtp = otpRepository
-                .findTopByEmailOrderByIdDesc(email)
-                .orElseThrow(() -> new RuntimeException("OTP not found for email: " + email));
-
-        if (resetOtp.isVerified()) {            //this is boolean
-            throw new RuntimeException("OTP already verified");
-        }
-
-        if (!resetOtp.getOtp().equals(otp)) {
-            throw new RuntimeException("Invalid OTP");
-        }
-
-        if (resetOtp.getExpiryTime().isBefore(LocalDateTime.now())) {
-            throw new RuntimeException("OTP has expired");
-        }
-
-        resetOtp.setVerified(true);
-        otpRepository.save(resetOtp);
-
-        return true;
-    }
-
     //Reset Password
-    public void resetPassword(String email, String newPassword) {
+    @Transactional
+    public void resetPassword(String verificationToken, String newPassword) {
 
-        Otp resetOtp = otpRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("OTP not found"));
+        //  FIND BY TOKEN (NOT EMAIL)
+        Otp resetOtp = otpRepository
+                .findByVerificationToken(verificationToken)
+                .orElseThrow(() -> new RuntimeException("Invalid verification token"));
 
-        if (!resetOtp.isVerified())
+        //  CHECK TOKEN EXPIRY
+        if (resetOtp.getTokenExpiryTime().isBefore(LocalDateTime.now())) {
+            throw new RuntimeException("Reset token expired");
+        }
+
+        //  CHECK IF OTP WAS VERIFIED
+        if (!resetOtp.isVerified()) {
             throw new RuntimeException("OTP not verified");
+        }
 
-        User user = userRepository.findByEmail(email)
+        // GET USER
+        User user = userRepository.findByEmail(resetOtp.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        // 🔥 UPDATE PASSWORD
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
 
+        // 🔥🔥🔥 DELETE OTP RECORD AFTER SUCCESS
         otpRepository.delete(resetOtp);
     }
 
@@ -261,7 +251,7 @@ public class AuthService {
 
     //They take email and return response with boolean and token
     @Transactional
-    public OtpVerificationResponse verifyOtp(String email, String otpInput) {
+    public String verifyAndGenerateToken(String email, String otpInput) {
 
         Otp otp = otpRepository
                 .findTopByEmailOrderByIdDesc(email)
@@ -281,15 +271,19 @@ public class AuthService {
             throw new RuntimeException("OTP has expired");
         }
 
-        // 🔐 Generate secure verification token
-        String verificationToken = UUID.randomUUID().toString();
-
+        //  Mark verified
         otp.setVerified(true);
+
+        //  Generate secure token
+        String verificationToken = UUID.randomUUID().toString();
         otp.setVerificationToken(verificationToken);
+
+        //  Token expiry (10 min)
+        otp.setTokenExpiryTime(LocalDateTime.now().plusMinutes(10));
 
         otpRepository.save(otp);
 
-        return new OtpVerificationResponse(true, verificationToken);
+        return verificationToken;
     }
 
 

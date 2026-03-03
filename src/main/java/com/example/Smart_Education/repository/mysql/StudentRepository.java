@@ -5,7 +5,6 @@ import com.example.Smart_Education.entity.student_entity.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
-import java.util.logging.LogManager;
 
 public interface StudentRepository extends JpaRepository <Student, Long>{
 

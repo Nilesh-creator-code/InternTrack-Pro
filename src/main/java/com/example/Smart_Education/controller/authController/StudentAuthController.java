@@ -1,15 +1,15 @@
 package com.example.Smart_Education.controller.authController;
 
 
-import com.example.Smart_Education.DTOs.AuthResponse;
-import com.example.Smart_Education.DTOs.LoginRequest;
+import com.example.Smart_Education.DTOs.*;
 import com.example.Smart_Education.entity.student_entity.Student;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.example.Smart_Education.DTOs.StudentRegistrationDTO;
 import com.example.Smart_Education.service.authService.AuthService;
+
+import java.util.Map;
 
 
 @RestController
@@ -40,21 +40,20 @@ public class StudentAuthController {
         return ResponseEntity.status(202).body("OTP sent to email");    }
 
     @PostMapping("/verify-otp")
-    public ResponseEntity<?> verifyOtp(@RequestParam String email,
-                                       @RequestParam String otp) {
-        boolean isVerified = authService.verifyOtpForStudent(email, otp);
-        if (isVerified) {
-            return ResponseEntity.ok("OTP verified");
-        } else {
-            return ResponseEntity.status(401).body("Invalid OTP or Expired OTP");
-        }
+    public ResponseEntity<?> verifyOtp(@RequestBody OtpRequest otpRequest) {
+        String verificationToken = authService.verifyAndGenerateToken(otpRequest.getEmail(), otpRequest.getOtp());
+        return ResponseEntity.ok(
+                Map.of(
+                        "message", "OTP verified successfully",
+                        "verificationToken", verificationToken
+                )
+        );
     }
 
     @PostMapping("/reset-password")
-    public ResponseEntity<?> resetPassword(@RequestParam String email,
-                                           @RequestParam String newPassword) {
-        authService.resetPassword(email, newPassword);
-        return ResponseEntity.status(200).body("Password updated successfully");
+    public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest request) {
+        authService.resetPassword(request.getVerificationToken(), request.getNewPassword());
+        return ResponseEntity.ok(Map.of("message", "Password Updated Successfully"));
     }
 
 }

@@ -29,4 +29,6 @@ public class Otp {
     private boolean verified;
 
     private String verificationToken;
+
+    private LocalDateTime tokenExpiryTime;
 }

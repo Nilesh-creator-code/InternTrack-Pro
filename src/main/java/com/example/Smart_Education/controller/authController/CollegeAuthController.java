@@ -1,9 +1,6 @@
 package com.example.Smart_Education.controller.authController;
 
-import com.example.Smart_Education.DTOs.AuthResponse;
-import com.example.Smart_Education.DTOs.CollegeRegisterDTO;
-import com.example.Smart_Education.DTOs.LoginRequest;
-import com.example.Smart_Education.DTOs.OtpRequest;
+import com.example.Smart_Education.DTOs.*;
 import com.example.Smart_Education.entity.OTP.OtpVerificationResponse;
 import com.example.Smart_Education.service.authService.AuthService;
 import jakarta.validation.Valid;
@@ -11,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth/college")
@@ -36,8 +35,14 @@ public class CollegeAuthController {
     public ResponseEntity<OtpVerificationResponse> verifyOtp(
             @Valid @RequestBody OtpRequest request) {
 
+        String verificationToken =
+                authService.verifyAndGenerateToken(
+                        request.getEmail(),
+                        request.getOtp()
+                );
+
         OtpVerificationResponse response =
-                authService.verifyOtp(request.getEmail(), request.getOtp());
+                new OtpVerificationResponse(true, verificationToken);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -66,6 +71,54 @@ public class CollegeAuthController {
                 .status(HttpStatus.OK)
                 .body(response);
     }
+
+    /* Forget password */
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestParam String email) {
+
+        authService.forgotPassword(email);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(Map.of(
+                        "message", "OTP sent successfully to registered email"
+                ));
+    }
+
+    @PostMapping("/verify-reset-otp")
+    public ResponseEntity<?> verifyResetOtp(
+            @Valid @RequestBody OtpRequest request) {
+
+        String verificationToken =
+                authService.verifyAndGenerateToken(
+                        request.getEmail(),
+                        request.getOtp()
+                );
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(Map.of(
+                        "message", "OTP verified successfully",
+                        "verificationToken", verificationToken
+                ));
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(
+            @Valid @RequestBody ResetPasswordRequest request) {
+
+        authService.resetPassword(
+                request.getVerificationToken(),
+                request.getNewPassword()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(Map.of(
+                        "message", "Password updated successfully"
+                ));
+    }
+    
 
 
 }
