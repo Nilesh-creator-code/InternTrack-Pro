@@ -33,4 +33,5 @@ public class CollegeRegisterDTO {
     private String description;
 
     private String verificationToken;
+
 }

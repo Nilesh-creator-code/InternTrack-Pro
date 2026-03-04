@@ -1,9 +1,6 @@
 package com.example.Smart_Education.service.authService;
 
-import com.example.Smart_Education.DTOs.AuthResponse;
-import com.example.Smart_Education.DTOs.CollegeRegisterDTO;
-import com.example.Smart_Education.DTOs.LoginRequest;
-import com.example.Smart_Education.DTOs.StudentRegistrationDTO;
+import com.example.Smart_Education.DTOs.*;
 import com.example.Smart_Education.config.JwtService;
 import com.example.Smart_Education.entity.EducationStatus;
 import com.example.Smart_Education.entity.OTP.Otp;
@@ -11,11 +8,9 @@ import com.example.Smart_Education.entity.OTP.OtpVerificationResponse;
 import com.example.Smart_Education.entity.Role;
 import com.example.Smart_Education.entity.User;
 import com.example.Smart_Education.entity.college_entity.College;
+import com.example.Smart_Education.entity.industry_entity.Industry;
 import com.example.Smart_Education.entity.student_entity.Student;
-import com.example.Smart_Education.repository.mysql.CollegeRepository;
-import com.example.Smart_Education.repository.mysql.OtpRepository;
-import com.example.Smart_Education.repository.mysql.StudentRepository;
-import com.example.Smart_Education.repository.mysql.UserRepository;
+import com.example.Smart_Education.repository.mysql.*;
 import com.example.Smart_Education.service.mailService.EmailService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +37,8 @@ public class AuthService {
     private final StudentRepository studentRepository;
 
     private final CollegeRepository collegeRepository;
+
+    private final IndustryRepository industryRepository;
 
 
     private final AuthenticationManager authenticationManager;
@@ -335,5 +332,57 @@ public class AuthService {
 
         return "College registered successfully";
     }
+    
+    /* Register Industry */
+    @Transactional
+    public String registerIndustry(IndustryRegisterDTO dto) {
+        // Similar to college registration but with Role.INDUSTRY and Industry entity
+
+        if (userRepository.existsByEmail(dto.getEmail())) {
+            throw new RuntimeException("Email already registered");
+        }
+
+        Otp otp = otpRepository
+                .findTopByEmailOrderByIdDesc(dto.getEmail())
+                .orElseThrow(() ->
+                        new RuntimeException("Email not verified")
+                );
+
+        // 🔐 SECURITY CHECK
+        if (!otp.isVerified()
+                || otp.getVerificationToken() == null
+                || !otp.getVerificationToken().equals(dto.getVerificationToken())) {
+
+            throw new RuntimeException("Invalid verification token");
+        }
+
+        // Create User
+        User user = User.builder()
+                .email(dto.getEmail())
+                .password(passwordEncoder.encode(dto.getPassword()))
+                .contactNumber(dto.getUserContactNumber())
+                .role(Role.INDUSTRY)
+                .build();
+
+        userRepository.save(user);
+
+        // Create College
+        Industry industry = Industry.builder()
+                .name(dto.getName())
+                .contactNumber(dto.getIndustryContactNumber())
+                .address(dto.getAddress())
+                .aboutUs(dto.getAboutUs())
+                .description(dto.getDescription())
+                .user(user)
+                .build();
+
+        industryRepository.save(industry);
+
+        // 🔥 Delete OTP after successful registration
+        otpRepository.delete(otp);
+
+        return "Industry registration not implemented yet";
+    }
+
 
 }
