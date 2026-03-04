@@ -27,8 +27,11 @@ public class College {
 
     @NotBlank(message = "Contact number is required")
     private String contactNumber;
+    @NotBlank(message = "Address is required")
     private String address;
+    @NotBlank(message = "About Us is required")
     private String aboutUs;
+    @NotBlank(message = "Description is required")
     private String description;
 
     @OneToOne

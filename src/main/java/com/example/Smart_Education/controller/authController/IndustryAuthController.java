@@ -1,7 +1,9 @@
 package com.example.Smart_Education.controller.authController;
 
 
+import com.example.Smart_Education.DTOs.AuthResponse;
 import com.example.Smart_Education.DTOs.IndustryRegisterDTO;
+import com.example.Smart_Education.DTOs.LoginRequest;
 import com.example.Smart_Education.DTOs.OtpRequest;
 import com.example.Smart_Education.entity.OTP.OtpVerificationResponse;
 import com.example.Smart_Education.service.authService.AuthService;
@@ -58,6 +60,17 @@ public class IndustryAuthController {
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
+                .body(response);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<AuthResponse> login(
+            @Valid @RequestBody LoginRequest request) {
+
+        AuthResponse response = authService.login(request);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
                 .body(response);
     }
 

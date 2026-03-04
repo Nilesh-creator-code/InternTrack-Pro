@@ -26,12 +26,16 @@ public class Industry {
     private String name;
 
     private String code; // e.g., IT, Finance, Healthcare
+    @NotBlank(message = "Title is required")
     private String title;
+    @NotBlank(message = "About Us is required")
     private String aboutUs;
+    @NotBlank
     private String description;
     
     @NotBlank(message = "Contact number is required")
     private String contactNumber;
+    @NotBlank(message = "Address is required")
     private String address;
 
     @OneToOne
