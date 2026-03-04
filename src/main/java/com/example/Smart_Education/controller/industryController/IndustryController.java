@@ -10,7 +10,7 @@ public class IndustryController {
 
     @GetMapping("/hello")
     public String sayHello() {
-        return "Hello from College Controller";
+        return "Hello from Industry Controller";
     }
 
 }
