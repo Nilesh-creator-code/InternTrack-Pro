@@ -1,7 +1,8 @@
 package com.example.Smart_Education.controller.industryController;
 
 
-import com.example.Smart_Education.DTOs.industryDTO.InternshipCreateDTO;
+import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.InternshipCreateDTO;
+import com.example.Smart_Education.entity.industry_entity.Internship;
 import com.example.Smart_Education.service.authService.AuthService;
 import com.example.Smart_Education.service.industryService.InternshipService;
 import jakarta.validation.Valid;
@@ -9,6 +10,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/industry/internships")
@@ -35,6 +38,11 @@ public class InternshipController {
         internshipService.createInternship(dto, email);
 
         return ResponseEntity.ok("Internship created successfully");
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<Internship>> getAllInternship() {
+            return ResponseEntity.ok(internshipService.getAllInternships());
     }
 
 }

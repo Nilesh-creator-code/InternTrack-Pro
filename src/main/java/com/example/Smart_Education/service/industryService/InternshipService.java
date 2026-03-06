@@ -1,6 +1,6 @@
 package com.example.Smart_Education.service.industryService;
 
-import com.example.Smart_Education.DTOs.industryDTO.InternshipCreateDTO;
+import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.InternshipCreateDTO;
 import com.example.Smart_Education.entity.industry_entity.Industry;
 import com.example.Smart_Education.entity.industry_entity.Internship;
 import com.example.Smart_Education.entity.industry_entity.InternshipDetails;
@@ -11,6 +11,8 @@ import com.example.Smart_Education.repository.mysql.industry.InternshipRepositor
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -64,4 +66,16 @@ public class InternshipService {
 
         detailsRepository.save(details);
     }
+
+
+    @Transactional
+    public List<Internship> getAllInternships() {
+        if (internshipRepository.count() == 0) {
+            throw new RuntimeException("No internships found");
+        }
+        return internshipRepository.findAll();
+    }
+
+
+
 }
