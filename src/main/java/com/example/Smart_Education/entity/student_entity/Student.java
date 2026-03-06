@@ -1,10 +1,7 @@
 package com.example.Smart_Education.entity.student_entity;
 
-import com.example.Smart_Education.entity.Course;
-import com.example.Smart_Education.entity.EducationStatus;
 import com.example.Smart_Education.entity.User;
 import com.example.Smart_Education.entity.college_entity.College;
-import com.example.Smart_Education.entity.industry_entity.Internship;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;

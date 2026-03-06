@@ -1,8 +1,7 @@
-package com.example.Smart_Education.DTOs;
+package com.example.Smart_Education.DTOs.studentDTO;
 
 
-import com.example.Smart_Education.entity.EducationStatus;
-import com.example.Smart_Education.entity.Role;
+import com.example.Smart_Education.entity.student_entity.EducationStatus;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

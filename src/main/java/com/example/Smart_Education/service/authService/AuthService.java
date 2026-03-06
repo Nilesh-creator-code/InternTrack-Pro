@@ -1,16 +1,22 @@
 package com.example.Smart_Education.service.authService;
 
-import com.example.Smart_Education.DTOs.*;
+import com.example.Smart_Education.DTOs.centralAuthDTO.AuthResponse;
+import com.example.Smart_Education.DTOs.centralAuthDTO.LoginRequest;
+import com.example.Smart_Education.DTOs.collegeDTO.CollegeRegisterDTO;
+import com.example.Smart_Education.DTOs.industryDTO.IndustryRegisterDTO;
+import com.example.Smart_Education.DTOs.studentDTO.StudentRegistrationDTO;
 import com.example.Smart_Education.config.JwtService;
-import com.example.Smart_Education.entity.EducationStatus;
+import com.example.Smart_Education.entity.student_entity.EducationStatus;
 import com.example.Smart_Education.entity.OTP.Otp;
-import com.example.Smart_Education.entity.OTP.OtpVerificationResponse;
 import com.example.Smart_Education.entity.Role;
 import com.example.Smart_Education.entity.User;
 import com.example.Smart_Education.entity.college_entity.College;
 import com.example.Smart_Education.entity.industry_entity.Industry;
 import com.example.Smart_Education.entity.student_entity.Student;
 import com.example.Smart_Education.repository.mysql.*;
+import com.example.Smart_Education.repository.mysql.college.CollegeRepository;
+import com.example.Smart_Education.repository.mysql.industry.IndustryRepository;
+import com.example.Smart_Education.repository.mysql.student.StudentRepository;
 import com.example.Smart_Education.service.mailService.EmailService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -369,6 +375,7 @@ public class AuthService {
         // Create College
         Industry industry = Industry.builder()
                 .name(dto.getName())
+                .title(dto.getTitle())
                 .contactNumber(dto.getIndustryContactNumber())
                 .address(dto.getAddress())
                 .aboutUs(dto.getAboutUs())
@@ -381,7 +388,7 @@ public class AuthService {
         // 🔥 Delete OTP after successful registration
         otpRepository.delete(otp);
 
-        return "Industry registration not implemented yet";
+        return "Industry registration successfully !!!";
     }
 
 

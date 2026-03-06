@@ -1,43 +1,38 @@
 package com.example.Smart_Education.entity.industry_entity;
 
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 
 @Entity
-@Table(name = "internships")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Internship {
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String companyName;
-    private String Name;
-    private String email;
-    private String phone;
-    private String location;
-    private String stipend;
-    private String requirements;
     private String title;
-    private String description;
+    private String shortDescription;
     private String domain;
+    private BigDecimal stipend;
+    private String location;
     private LocalDate startDate;
     private LocalDate endDate;
+    private LocalDate lastDateToApply;
+    private String type;
+    @Enumerated(EnumType.STRING)
+    private InternshipStatus status;
 
     @ManyToOne
     @JoinColumn(name = "industry_id")
     private Industry industry;
-
 }

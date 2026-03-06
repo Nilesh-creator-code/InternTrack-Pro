@@ -1,7 +1,8 @@
-package com.example.Smart_Education.DTOs;
+package com.example.Smart_Education.DTOs.industryDTO;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
@@ -19,15 +20,19 @@ public class IndustryRegisterDTO {
     private String password;
 
     @NotBlank(message = "Contact number is required")
+    @Pattern(regexp = "^[0-9]{10}$", message = "Enter valid 10 digit number")
     private String userContactNumber;
 
-    // ===== College Fields =====
+    // ===== Industry Fields =====
     @NotBlank(message = "Industry name is required")
     private String name;
 
     @NotBlank(message = "Industry contact number is required")
+    @Pattern(regexp = "^[0-9]{10}$", message = "Enter valid 10 digit number")
     private String industryContactNumber;
 
+    @NotBlank(message = "Title is required")
+    private String title;
     private String address;
     private String aboutUs;
     private String description;

@@ -1,7 +1,11 @@
 package com.example.Smart_Education.controller.authController;
 
 
-import com.example.Smart_Education.DTOs.*;
+import com.example.Smart_Education.DTOs.centralAuthDTO.AuthResponse;
+import com.example.Smart_Education.DTOs.centralAuthDTO.LoginRequest;
+import com.example.Smart_Education.DTOs.centralAuthDTO.OtpRequest;
+import com.example.Smart_Education.DTOs.centralAuthDTO.ResetPasswordRequest;
+import com.example.Smart_Education.DTOs.studentDTO.StudentRegistrationDTO;
 import com.example.Smart_Education.entity.student_entity.Student;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

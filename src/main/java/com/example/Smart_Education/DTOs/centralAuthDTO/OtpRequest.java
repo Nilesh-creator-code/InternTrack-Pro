@@ -1,4 +1,4 @@
-package com.example.Smart_Education.DTOs;
+package com.example.Smart_Education.DTOs.centralAuthDTO;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

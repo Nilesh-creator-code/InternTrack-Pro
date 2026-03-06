@@ -1,4 +1,4 @@
-package com.example.Smart_Education.repository.mysql;
+package com.example.Smart_Education.repository.mysql.student;
 
 import com.example.Smart_Education.entity.User;
 import com.example.Smart_Education.entity.student_entity.Student;

@@ -30,7 +30,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         // 🔓 Public Auth APIs
-                        .requestMatchers("/api/auth/student**").permitAll()
+                        .requestMatchers("/api/auth/student/**").permitAll()
                         .requestMatchers("/api/auth/college/**").permitAll()
                         .requestMatchers("/api/auth/industry/**").permitAll()
 
@@ -40,8 +40,9 @@ public class SecurityConfig {
                         // 🔐 College Protected APIs
                         .requestMatchers("/api/college-controller/**").hasRole("COLLEGE")
 
-                        // 🔐 College Protected APIs
+                        // 🔐 Industry Protected APIs
                         .requestMatchers("/api/industry-controller/**").hasRole("INDUSTRY")
+                        .requestMatchers("/api/industry/internships/**").hasRole("INDUSTRY")
 
                         .anyRequest().authenticated()
                 )

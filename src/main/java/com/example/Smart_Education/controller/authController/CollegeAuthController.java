@@ -1,6 +1,10 @@
 package com.example.Smart_Education.controller.authController;
 
-import com.example.Smart_Education.DTOs.*;
+import com.example.Smart_Education.DTOs.centralAuthDTO.AuthResponse;
+import com.example.Smart_Education.DTOs.centralAuthDTO.LoginRequest;
+import com.example.Smart_Education.DTOs.centralAuthDTO.OtpRequest;
+import com.example.Smart_Education.DTOs.centralAuthDTO.ResetPasswordRequest;
+import com.example.Smart_Education.DTOs.collegeDTO.CollegeRegisterDTO;
 import com.example.Smart_Education.entity.OTP.OtpVerificationResponse;
 import com.example.Smart_Education.service.authService.AuthService;
 import jakarta.validation.Valid;

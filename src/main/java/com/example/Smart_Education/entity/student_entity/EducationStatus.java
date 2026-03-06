@@ -1,4 +1,4 @@
-package com.example.Smart_Education.entity;
+package com.example.Smart_Education.entity.student_entity;
 
 public enum EducationStatus {
     CURRENT,
