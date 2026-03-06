@@ -1,6 +1,7 @@
 package com.example.Smart_Education.service.industryService;
 
 import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.InternshipCreateDTO;
+import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.InternshipResposeDTO;
 import com.example.Smart_Education.entity.industry_entity.Industry;
 import com.example.Smart_Education.entity.industry_entity.Internship;
 import com.example.Smart_Education.entity.industry_entity.InternshipDetails;
@@ -69,12 +70,28 @@ public class InternshipService {
 
 
     @Transactional
-    public List<Internship> getAllInternships() {
+    public List<InternshipResposeDTO> getAllInternships() {
         if (internshipRepository.count() == 0) {
             throw new RuntimeException("No internships found");
         }
-        return internshipRepository.findAll();
+        List<Internship> internships = internshipRepository.findAll();
+        return internships.stream()
+                .map(internship -> InternshipResposeDTO.builder()
+                        .id(internship.getId())
+                        .title(internship.getTitle())
+                        .shortDescription(internship.getShortDescription())
+                        .domain(internship.getDomain())
+                        .stipend(internship.getStipend())
+                        .location(internship.getLocation())
+                        .startDate(internship.getStartDate())
+                        .endDate(internship.getEndDate())
+                        .lastDateToApply(internship.getLastDateToApply())
+                        .type(internship.getType())
+                        .build())
+                .toList();
     }
+
+
 
 
 

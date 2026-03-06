@@ -2,7 +2,7 @@ package com.example.Smart_Education.controller.industryController;
 
 
 import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.InternshipCreateDTO;
-import com.example.Smart_Education.entity.industry_entity.Internship;
+import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.InternshipResposeDTO;
 import com.example.Smart_Education.service.authService.AuthService;
 import com.example.Smart_Education.service.industryService.InternshipService;
 import jakarta.validation.Valid;
@@ -41,7 +41,7 @@ public class InternshipController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<Internship>> getAllInternship() {
+    public ResponseEntity<List<InternshipResposeDTO>> getAllInternship() {
             return ResponseEntity.ok(internshipService.getAllInternships());
     }
 
