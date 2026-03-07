@@ -10,4 +10,5 @@ public interface InternshipDetailsRepository extends MongoRepository<InternshipD
 
     Optional<InternshipDetails> findByInternshipId(Long internshipId);
 
+    void deleteByInternshipId(Long id);
 }

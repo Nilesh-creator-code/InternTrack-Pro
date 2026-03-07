@@ -49,7 +49,7 @@ public class InternshipController {
             return ResponseEntity.ok(internshipService.getAllInternships());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/view/{id}")
     public ResponseEntity<IndustryInternshipResponseDTO> getMethodName(@PathVariable Long id) {
         IndustryInternshipResponseDTO internship = internshipService.getInternshipById(id);
         return ResponseEntity.ok(internship);
@@ -59,6 +59,16 @@ public class InternshipController {
     public ResponseEntity<List<InternshipResposeDTO>> getInternshipsByDomain(@PathVariable String domain) {
         List<InternshipResposeDTO> internships = internshipService.getInternshipsByDomain(domain);
         return ResponseEntity.ok(internships);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteInternship(@PathVariable Long id, Authentication authentication) {
+
+        String email = authentication.getName();
+
+        internshipService.deleteInternship(id, email);
+
+        return ResponseEntity.ok("Internship deleted successfully");
     }
 
 }

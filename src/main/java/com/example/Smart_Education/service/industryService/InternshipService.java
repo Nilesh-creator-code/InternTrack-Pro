@@ -140,4 +140,33 @@ public class InternshipService {
                 .toList();
     }
 
+    
+    /* Delete internship */
+@Transactional
+public String deleteInternship(Long id, String email) {
+
+    Industry industry = industryRepository
+            .findByUserEmail(email)
+            .orElseThrow(() -> new RuntimeException("Industry not found"));
+
+    Internship internship = internshipRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Internship not found"));
+
+    // Ownership check
+    if (!internship.getIndustry().getId().equals(industry.getId())) {
+        throw new RuntimeException("You are not authorized to delete this internship");
+    }
+
+    // delete MongoDB details
+    detailsRepository.deleteByInternshipId(id);
+
+    // delete SQL record
+    internshipRepository.deleteById(id);
+
+    return "Internship deleted successfully";
+}
+
+
+
+
 }

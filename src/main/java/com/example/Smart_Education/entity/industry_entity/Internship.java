@@ -35,4 +35,5 @@ public class Internship {
     @ManyToOne
     @JoinColumn(name = "industry_id")
     private Industry industry;
+
 }
