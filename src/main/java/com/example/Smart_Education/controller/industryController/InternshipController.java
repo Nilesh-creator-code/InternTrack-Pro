@@ -1,6 +1,7 @@
 package com.example.Smart_Education.controller.industryController;
 
 
+import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.IndustryInternshipResponseDTO;
 import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.InternshipCreateDTO;
 import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.InternshipResposeDTO;
 import com.example.Smart_Education.service.authService.AuthService;
@@ -12,6 +13,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @RequestMapping("/api/industry/internships")
@@ -44,5 +48,12 @@ public class InternshipController {
     public ResponseEntity<List<InternshipResposeDTO>> getAllInternship() {
             return ResponseEntity.ok(internshipService.getAllInternships());
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<IndustryInternshipResponseDTO> getMethodName(@PathVariable Long id) {
+        IndustryInternshipResponseDTO internship = internshipService.getInternshipById(id);
+        return ResponseEntity.ok(internship);
+    }
+    
 
 }

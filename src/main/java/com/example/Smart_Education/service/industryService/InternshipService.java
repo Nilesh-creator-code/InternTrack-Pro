@@ -1,5 +1,6 @@
 package com.example.Smart_Education.service.industryService;
 
+import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.IndustryInternshipResponseDTO;
 import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.InternshipCreateDTO;
 import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.InternshipResposeDTO;
 import com.example.Smart_Education.entity.industry_entity.Industry;
@@ -89,6 +90,34 @@ public class InternshipService {
                         .type(internship.getType())
                         .build())
                 .toList();
+    }
+
+    /* Get internship by ID */
+    @Transactional
+    public IndustryInternshipResponseDTO getInternshipById(Long id) {
+        Internship internship = internshipRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Internship not found"));
+
+        InternshipDetails details = detailsRepository.findByInternshipId(internship.getId())
+                .orElseThrow(() -> new RuntimeException("Internship details not found"));
+
+        return IndustryInternshipResponseDTO.builder()
+                .id(internship.getId())
+                .title(internship.getTitle())
+                .shortDescription(internship.getShortDescription())
+                .domain(internship.getDomain())
+                .stipend(internship.getStipend())
+                .location(internship.getLocation())
+                .startDate(internship.getStartDate())
+                .endDate(internship.getEndDate())
+                .lastDateToApply(internship.getLastDateToApply())
+                .type(internship.getType())
+
+                /* MongoDB data */
+                .fullDescription(details.getFullDescription())
+                .skillRequired(details.getSkillsRequired())
+                .responsibilities(details.getResponsibilities())
+                .build();
     }
 
 
