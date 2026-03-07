@@ -1,4 +1,4 @@
-package com.example.Smart_Education.service.industryService;
+package com.example.Smart_Education.service.internshipservice;
 
 import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.IndustryInternshipResponseDTO;
 import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.InternshipCreateDTO;
@@ -7,6 +7,7 @@ import com.example.Smart_Education.entity.industry_entity.Industry;
 import com.example.Smart_Education.entity.industry_entity.Internship;
 import com.example.Smart_Education.entity.industry_entity.InternshipDetails;
 import com.example.Smart_Education.entity.industry_entity.InternshipStatus;
+import com.example.Smart_Education.exception.ResourceNotFoundException;
 import com.example.Smart_Education.repository.mongodb.industry.InternshipDetailsRepository;
 import com.example.Smart_Education.repository.mysql.industry.IndustryRepository;
 import com.example.Smart_Education.repository.mysql.industry.InternshipRepository;
@@ -19,7 +20,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class InternshipService {
+public class InternshipServiceImpl implements InternshipService{
 
     //Mysql repo
     private final InternshipRepository internshipRepository;
@@ -29,6 +30,7 @@ public class InternshipService {
     private final IndustryRepository industryRepository;
 
     @Transactional
+    @Override
     public void createInternship(InternshipCreateDTO dto, String email) {
 
         if (dto.getEndDate().isBefore(dto.getStartDate())) {
@@ -71,11 +73,15 @@ public class InternshipService {
 
 
     @Transactional
+    @Override
     public List<InternshipResposeDTO> getAllInternships() {
-        if (internshipRepository.count() == 0) {
-            throw new RuntimeException("No internships found");
-        }
+
         List<Internship> internships = internshipRepository.findAll();
+
+        if (internships.isEmpty()) {
+            throw new ResourceNotFoundException("No internships found");
+        }
+
         return internships.stream()
                 .map(internship -> InternshipResposeDTO.builder()
                         .id(internship.getId())
@@ -94,6 +100,7 @@ public class InternshipService {
 
     /* Get internship by ID */
     @Transactional
+    @Override
     public IndustryInternshipResponseDTO getInternshipById(Long id) {
         Internship internship = internshipRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Internship not found"));
@@ -122,6 +129,7 @@ public class InternshipService {
 
     /* Get internship by domain */
     @Transactional
+    @Override
     public List<InternshipResposeDTO> getInternshipsByDomain(String domain) {
         List<Internship> internships = internshipRepository.findByDomainIgnoreCase(domain);
         return internships.stream()
@@ -143,6 +151,7 @@ public class InternshipService {
     
     /* Delete internship */
 @Transactional
+@Override
 public String deleteInternship(Long id, String email) {
 
     Industry industry = industryRepository
@@ -166,7 +175,57 @@ public String deleteInternship(Long id, String email) {
     return "Internship deleted successfully";
 }
 
+    /*Update internship*/
+    @Transactional
+    @Override
+    public IndustryInternshipResponseDTO updateInternship(Long id, InternshipCreateDTO dto, String email) {
 
+        Industry industry = industryRepository
+                .findByUserEmail(email)
+                .orElseThrow(() -> new RuntimeException("Industry not found"));
+
+        Internship internship = internshipRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Internship not found"));
+
+        // Ownership validation
+        if (!internship.getIndustry().getId().equals(industry.getId())) {
+            throw new RuntimeException("You are not authorized to update this internship");
+        }
+
+        // Date validation
+        if (dto.getEndDate().isBefore(dto.getStartDate())) {
+            throw new RuntimeException("End date must be after start date");
+        }
+
+        if (dto.getLastDateToApply().isAfter(dto.getStartDate())) {
+            throw new RuntimeException("Last date to apply must be before start date");
+        }
+
+        // Update SQL data
+        internship.setTitle(dto.getTitle());
+        internship.setShortDescription(dto.getShortDescription());
+        internship.setDomain(dto.getDomain());
+        internship.setStipend(dto.getStipend());
+        internship.setLocation(dto.getLocation());
+        internship.setStartDate(dto.getStartDate());
+        internship.setEndDate(dto.getEndDate());
+        internship.setLastDateToApply(dto.getLastDateToApply());
+        internship.setType(dto.getType());
+
+        internshipRepository.save(internship);
+
+        // Update MongoDB details
+        InternshipDetails details = detailsRepository.findByInternshipId(id)
+                .orElseThrow(() -> new RuntimeException("Internship details not found"));
+
+        details.setFullDescription(dto.getFullDescription());
+        details.setSkillsRequired(dto.getSkillsRequired());
+        details.setResponsibilities(dto.getResponsibilities());
+
+        detailsRepository.save(details);
+
+        return getInternshipById(id);
+    }
 
 
 }

@@ -5,16 +5,17 @@ import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.IndustryIntern
 import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.InternshipCreateDTO;
 import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.InternshipResposeDTO;
 import com.example.Smart_Education.service.authService.AuthService;
-import com.example.Smart_Education.service.industryService.InternshipService;
+import com.example.Smart_Education.service.internshipservice.InternshipServiceImpl;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+
+import org.hibernate.sql.Update;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 @RestController
@@ -22,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @AllArgsConstructor
 public class InternshipController {
 
-    private final InternshipService internshipService;  
+    private final InternshipServiceImpl internshipService;
 
     private final AuthService authService;
 
@@ -60,7 +61,22 @@ public class InternshipController {
         List<InternshipResposeDTO> internships = internshipService.getInternshipsByDomain(domain);
         return ResponseEntity.ok(internships);
     }
+    /* Update Internship */
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> updateInternship(
+            @PathVariable Long id,
+            @Valid @RequestBody InternshipCreateDTO dto,
+            Authentication authentication
+    ) {
 
+        String email = authentication.getName();
+
+        internshipService.updateInternship(id, dto, email);
+
+        return ResponseEntity.ok("Internship updated successfully");
+    }
+
+    /* Delete internship */
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteInternship(@PathVariable Long id, Authentication authentication) {
 
@@ -69,6 +85,8 @@ public class InternshipController {
         internshipService.deleteInternship(id, email);
 
         return ResponseEntity.ok("Internship deleted successfully");
-    }
+    }   
+
+    
 
 }
