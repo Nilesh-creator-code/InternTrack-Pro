@@ -120,8 +120,24 @@ public class InternshipService {
                 .build();
     }
 
-
-
-
+    /* Get internship by domain */
+    @Transactional
+    public List<InternshipResposeDTO> getInternshipsByDomain(String domain) {
+        List<Internship> internships = internshipRepository.findByDomainIgnoreCase(domain);
+        return internships.stream()
+                .map(internship -> InternshipResposeDTO.builder()
+                        .id(internship.getId())
+                        .title(internship.getTitle())
+                        .shortDescription(internship.getShortDescription())
+                        .domain(internship.getDomain())
+                        .stipend(internship.getStipend())
+                        .location(internship.getLocation())
+                        .startDate(internship.getStartDate())
+                        .endDate(internship.getEndDate())
+                        .lastDateToApply(internship.getLastDateToApply())
+                        .type(internship.getType())
+                        .build())
+                .toList();
+    }
 
 }

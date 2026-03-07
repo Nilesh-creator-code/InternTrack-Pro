@@ -54,6 +54,11 @@ public class InternshipController {
         IndustryInternshipResponseDTO internship = internshipService.getInternshipById(id);
         return ResponseEntity.ok(internship);
     }
-    
+
+    @GetMapping("/domain/{domain}")
+    public ResponseEntity<List<InternshipResposeDTO>> getInternshipsByDomain(@PathVariable String domain) {
+        List<InternshipResposeDTO> internships = internshipService.getInternshipsByDomain(domain);
+        return ResponseEntity.ok(internships);
+    }
 
 }
