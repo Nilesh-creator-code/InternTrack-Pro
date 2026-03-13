@@ -12,6 +12,10 @@ import com.example.Smart_Education.repository.mongodb.industry.InternshipDetails
 import com.example.Smart_Education.repository.mysql.industry.IndustryRepository;
 import com.example.Smart_Education.repository.mysql.industry.InternshipRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -225,6 +229,28 @@ public String deleteInternship(Long id, String email) {
         detailsRepository.save(details);
 
         return getInternshipById(id);
+    }
+
+    public Page<InternshipResposeDTO> getAllInternshipsByPage(int page, int size){
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
+
+        Page<Internship> internshipPage = internshipRepository.findAll(pageable);
+
+        return internshipPage.map(internship ->
+                InternshipResposeDTO.builder()
+                        .id(internship.getId())
+                        .title(internship.getTitle())
+                        .shortDescription(internship.getShortDescription())
+                        .domain(internship.getDomain())
+                        .stipend(internship.getStipend())
+                        .location(internship.getLocation())
+                        .startDate(internship.getStartDate())
+                        .endDate(internship.getEndDate())
+                        .lastDateToApply(internship.getLastDateToApply())
+                        .type(internship.getType())
+                        .build()
+        );
     }
 
 

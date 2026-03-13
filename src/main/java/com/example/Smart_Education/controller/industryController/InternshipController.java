@@ -87,6 +87,16 @@ public class InternshipController {
         return ResponseEntity.ok("Internship deleted successfully");
     }   
 
-    
+    @GetMapping("/all/pagination")
+    public ResponseEntity<List<InternshipResposeDTO>> getAllInternshipsByPage(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        List<InternshipResposeDTO> response = internshipService.getAllInternshipsByPage(page, size).getContent();
+
+        return ResponseEntity
+                .status(200)
+                .body(response);
+    }
 
 }
