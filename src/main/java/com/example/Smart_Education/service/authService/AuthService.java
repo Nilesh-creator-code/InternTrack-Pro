@@ -342,7 +342,6 @@ public class AuthService {
     /* Register Industry */
     @Transactional
     public String registerIndustry(IndustryRegisterDTO dto) {
-        // Similar to college registration but with Role.INDUSTRY and Industry entity
 
         if (userRepository.existsByEmail(dto.getEmail())) {
             throw new RuntimeException("Email already registered");
@@ -357,9 +356,10 @@ public class AuthService {
         // 🔐 SECURITY CHECK
         if (!otp.isVerified()
                 || otp.getVerificationToken() == null
-                || !otp.getVerificationToken().equals(dto.getVerificationToken())) {
+                || !otp.getVerificationToken().equals(dto.getVerificationToken())
+                || otp.getTokenExpiryTime().isBefore(LocalDateTime.now())) {
 
-            throw new RuntimeException("Invalid verification token");
+            throw new RuntimeException("Invalid or expired verification token");
         }
 
         // Create User
@@ -372,7 +372,7 @@ public class AuthService {
 
         userRepository.save(user);
 
-        // Create College
+        // Create Industry
         Industry industry = Industry.builder()
                 .name(dto.getName())
                 .title(dto.getTitle())
@@ -385,8 +385,8 @@ public class AuthService {
 
         industryRepository.save(industry);
 
-        // 🔥 Delete OTP after successful registration
-        otpRepository.delete(otp);
+        // 🔥 Clean OTP records
+        otpRepository.deleteByEmail(dto.getEmail());
 
         return "Industry registration successfully !!!";
     }

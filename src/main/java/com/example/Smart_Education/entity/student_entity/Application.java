@@ -6,6 +6,7 @@ import com.example.Smart_Education.entity.User;
 import com.example.Smart_Education.entity.industry_entity.Internship;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,18 +17,21 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public abstract class Application {
+@Builder
+public class Application {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private LocalDate applicationDate;
-    private String status;              // APPLIED, APPROVED, REJECTED, ONGOING, COMPLETED
+
+    @Enumerated(EnumType.STRING)
+    private Applicationstatus status;              // APPLIED, APPROVED, REJECTED, ONGOING, COMPLETED
 
     @ManyToOne
     @JoinColumn(name = "student_id")
-    private User student;
+    private Student student;
 
     @ManyToOne
     @JoinColumn(name = "internship_id")

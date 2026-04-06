@@ -9,7 +9,6 @@ import com.example.Smart_Education.service.internshipservice.InternshipServiceIm
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
-import org.hibernate.sql.Update;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -61,6 +60,7 @@ public class InternshipController {
         List<InternshipResposeDTO> internships = internshipService.getInternshipsByDomain(domain);
         return ResponseEntity.ok(internships);
     }
+    
     /* Update Internship */
     @PutMapping("/update/{id}")
     public ResponseEntity<?> updateInternship(

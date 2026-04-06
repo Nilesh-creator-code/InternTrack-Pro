@@ -7,18 +7,26 @@ import com.example.Smart_Education.entity.industry_entity.Industry;
 import com.example.Smart_Education.entity.industry_entity.Internship;
 import com.example.Smart_Education.entity.industry_entity.InternshipDetails;
 import com.example.Smart_Education.entity.industry_entity.InternshipStatus;
+import com.example.Smart_Education.entity.student_entity.Application;
+import com.example.Smart_Education.entity.student_entity.Applicationstatus;
+import com.example.Smart_Education.entity.student_entity.Student;
 import com.example.Smart_Education.exception.ResourceNotFoundException;
 import com.example.Smart_Education.repository.mongodb.industry.InternshipDetailsRepository;
 import com.example.Smart_Education.repository.mysql.industry.IndustryRepository;
 import com.example.Smart_Education.repository.mysql.industry.InternshipRepository;
+import com.example.Smart_Education.repository.mysql.student.ApplicationRepository;
+import com.example.Smart_Education.repository.mysql.student.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -32,6 +40,12 @@ public class InternshipServiceImpl implements InternshipService{
     private final InternshipDetailsRepository detailsRepository;
     //MySql repo
     private final IndustryRepository industryRepository;
+    //Student repo
+    private final StudentRepository studentRepository;
+    //Application repo
+    private final ApplicationRepository applicationRepository;
+
+    
 
     @Transactional
     @Override
@@ -252,6 +266,43 @@ public String deleteInternship(Long id, String email) {
                         .build()
         );
     }
+
+@Override
+public String applyForInternship(Long internshipId) {
+
+    // Get logged-in user
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    String email = authentication.getName();
+
+    // Assuming StudentRepository and ApplicationRepository are injected
+    // private final StudentRepository studentRepository;
+    // private final ApplicationRepository applicationRepository;
+
+    Student student = studentRepository.findByUser_Email(email)
+            .orElseThrow(() -> new RuntimeException("Student not found"));
+
+    Internship internship = internshipRepository.findById(internshipId)
+            .orElseThrow(() -> new RuntimeException("Internship not found"));
+
+    if (internship.getStatus() != InternshipStatus.OPEN || internship.getLastDateToApply().isBefore(LocalDate.now())) {
+        throw new RuntimeException("Cannot apply for this internship");
+    }
+
+    if (applicationRepository.existsByStudentAndInternship(student, internship)) {
+        throw new RuntimeException("Already applied for this internship");
+    }
+
+Application application = Application.builder()
+        .student(student)
+        .internship(internship)
+        .status(Applicationstatus.APPLIED)
+        .applicationDate(LocalDate.now())
+        .build();
+
+applicationRepository.save(application);
+
+    return "Applied for internship successfully";
+}
 
 
 }

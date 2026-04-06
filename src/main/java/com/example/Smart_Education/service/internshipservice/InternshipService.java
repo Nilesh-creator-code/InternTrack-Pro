@@ -24,4 +24,6 @@ public interface InternshipService {
 
     Page<InternshipResposeDTO> getAllInternshipsByPage(int page, int size);
 
+    String applyForInternship(Long internshipId);
+
 }

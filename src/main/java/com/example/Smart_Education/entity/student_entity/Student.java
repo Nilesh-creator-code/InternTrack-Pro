@@ -46,6 +46,5 @@ public class Student {
     @ManyToOne
     @JoinColumn(name = "college_id",nullable = true)
     private College college;
-
 }
 
