@@ -1,8 +1,10 @@
 package com.example.Smart_Education.service.internshipservice;
 
+import com.example.Smart_Education.DTOs.industryDTO.IndustryApplicationResponseDTO;
 import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.IndustryInternshipResponseDTO;
 import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.InternshipCreateDTO;
 import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.InternshipResposeDTO;
+import com.example.Smart_Education.DTOs.studentDTO.StudentApplicationResponseDTO;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -25,5 +27,8 @@ public interface InternshipService {
     Page<InternshipResposeDTO> getAllInternshipsByPage(int page, int size);
 
     String applyForInternship(Long internshipId);
+
+    /* Get application dto where student has applied */
+    public List<IndustryApplicationResponseDTO> getApplicationsForMyIndustry();
 
 }

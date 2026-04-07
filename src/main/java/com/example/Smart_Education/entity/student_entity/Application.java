@@ -3,6 +3,7 @@ package com.example.Smart_Education.entity.student_entity;
 import java.time.LocalDate;
 
 import com.example.Smart_Education.entity.User;
+import com.example.Smart_Education.entity.industry_entity.Industry;
 import com.example.Smart_Education.entity.industry_entity.Internship;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -36,5 +37,9 @@ public class Application {
     @ManyToOne
     @JoinColumn(name = "internship_id")
     private Internship internship;
+
+    @ManyToOne
+    @JoinColumn(name = "industry_id")
+    private Industry industry;
     
 }

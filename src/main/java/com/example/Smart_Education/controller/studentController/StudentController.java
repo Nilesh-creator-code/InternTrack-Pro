@@ -2,6 +2,7 @@ package com.example.Smart_Education.controller.studentController;
 
 import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.IndustryInternshipResponseDTO;
 import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.InternshipResposeDTO;
+import com.example.Smart_Education.DTOs.studentDTO.StudentApplicationResponseDTO;
 import com.example.Smart_Education.entity.student_entity.Student;
 import com.example.Smart_Education.service.internshipservice.InternshipServiceImpl;
 import com.example.Smart_Education.service.studentSerivce.StudentService;
@@ -103,5 +104,14 @@ public class StudentController {
         String response = internshipService.applyForInternship(internshipId);
         return ResponseEntity.ok(response); // 200 OK with response message
     }
+
+    /* get student's applications */
+    @GetMapping("/applications")
+    public ResponseEntity<List<StudentApplicationResponseDTO>> getStudentApplications() {
+        List<StudentApplicationResponseDTO> applications = internshipService.getApplicationDtoByStudent();
+        return ResponseEntity.ok(applications);
+    }
+
+
 
 }
