@@ -26,6 +26,8 @@ public class Student {
 
     private String department;
 
+    private String CollegeName;
+
 
     @OneToOne
     @JoinColumn(name = "user_id", unique = true)
@@ -43,8 +45,11 @@ public class Student {
     @Column(nullable = false)
     private EducationStatus educationStatus;
 
-    @ManyToOne
-    @JoinColumn(name = "college_id",nullable = true)
-    private College college;
+//    @ManyToOne
+//    @JoinColumn(name = "college_id",nullable = true)
+//    private College college;
+
+
+
 }
 

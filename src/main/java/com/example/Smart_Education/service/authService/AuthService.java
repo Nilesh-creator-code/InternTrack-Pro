@@ -57,6 +57,7 @@ public class AuthService {
 
 
     //    For the registration of the student
+    @Transactional
     public Student registerStudent(StudentRegistrationDTO dto) {
 
 
@@ -66,7 +67,6 @@ public class AuthService {
         }
 
 
-
         // 1️⃣ Validate Education Status
         if (dto.getEducationStatus() == null) {
             throw new RuntimeException("Education status is required");
@@ -74,16 +74,16 @@ public class AuthService {
 
 
         // 3️⃣ Handle College Based on Education Status
-        College college = null;
+//        College college = null;
 
-        if (dto.getEducationStatus() == EducationStatus.CURRENT) {
-            if (dto.getCollegeId() == null) {
-                throw new RuntimeException("College is required for current students");
-            }
-
-            college = collegeRepository.findById(dto.getCollegeId())
-                    .orElseThrow(() -> new RuntimeException("College not found"));
-        }
+//        if (dto.getEducationStatus() == EducationStatus.CURRENT) {
+//            if (dto.getCollegeId() == null) {
+//                throw new RuntimeException("College is required for current students");
+//            }
+//
+//            college = collegeRepository.findById(dto.getCollegeId())
+//                    .orElseThrow(() -> new RuntimeException("College not found"));
+//        }
 
         // 2. Create User
         User user = User.builder()
@@ -101,14 +101,15 @@ public class AuthService {
                 .department(dto.getDepartment())
                 .educationStatus(dto.getEducationStatus())
                 .user(user)
-                .college(college)
+                .CollegeName(dto.getCollegeName())
                 .build();
 
         return studentRepository.save(student);
     }
 
 
-    //For login the student
+    //For login the industry and student
+    @Transactional
     public AuthResponse login(LoginRequest request) {
 
         // 1️⃣ Authenticate user (email + password)

@@ -4,6 +4,7 @@ import com.example.Smart_Education.service.authService.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -27,20 +28,21 @@ public class SecurityConfig {
             throws Exception {
 
         http
+                .cors(cors -> {}) // ✅ FIXED (no deprecation)
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // 🔓 Public Auth APIs
+
+                        // ✅ allow preflight
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                        // 🔓 Public APIs
                         .requestMatchers("/api/auth/student/**").permitAll()
                         .requestMatchers("/api/auth/college/**").permitAll()
                         .requestMatchers("/api/auth/industry/**").permitAll()
 
-                        // 🔐 Student Protected APIs
+                        // 🔐 Protected APIs
                         .requestMatchers("/api/student-controller/**").hasRole("STUDENT")
-
-                        // 🔐 College Protected APIs
                         .requestMatchers("/api/college-controller/**").hasRole("COLLEGE")
-
-                        // 🔐 Industry Protected APIs
                         .requestMatchers("/api/industry-controller/**").hasRole("INDUSTRY")
                         .requestMatchers("/api/industry/internships/**").hasRole("INDUSTRY")
 
@@ -51,7 +53,6 @@ public class SecurityConfig {
                 )
                 .formLogin(form -> form.disable())
                 .httpBasic(basic -> basic.disable());
-
 
         http.addFilterBefore(jwtAuthenticationFilter,
                 UsernamePasswordAuthenticationFilter.class);

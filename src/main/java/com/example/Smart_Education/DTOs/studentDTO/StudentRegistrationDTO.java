@@ -19,7 +19,7 @@ public class StudentRegistrationDTO {
     @NotBlank(message = "Contact number is required")
     private String contactNumber;
 
-    private Long collegeId;
+    private String collegeName;
 
     // User fields (Authentication)
     @NotBlank(message = "Email is required")

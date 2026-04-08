@@ -5,6 +5,8 @@ import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.IndustryIntern
 import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.InternshipCreateDTO;
 import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.InternshipResposeDTO;
 import com.example.Smart_Education.DTOs.studentDTO.StudentApplicationResponseDTO;
+import com.example.Smart_Education.entity.industry_entity.Internship;
+
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -29,6 +31,12 @@ public interface InternshipService {
     String applyForInternship(Long internshipId);
 
     /* Get application dto where student has applied */
+    List<StudentApplicationResponseDTO> getApplicationDtoByStudent();
+
+    /* Get application dto where student has applied */
     public List<IndustryApplicationResponseDTO> getApplicationsForMyIndustry();
+
+    //For industry dashboard - Get all internships posted by the industry
+    public List<InternshipResposeDTO> getMyInternships(String email);
 
 }

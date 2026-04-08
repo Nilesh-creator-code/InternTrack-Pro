@@ -4,6 +4,7 @@ package com.example.Smart_Education.controller.industryController;
 import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.IndustryInternshipResponseDTO;
 import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.InternshipCreateDTO;
 import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.InternshipResposeDTO;
+import com.example.Smart_Education.config.CustomUserDetails;
 import com.example.Smart_Education.service.authService.AuthService;
 import com.example.Smart_Education.service.internshipservice.InternshipServiceImpl;
 import jakarta.validation.Valid;
@@ -14,7 +15,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import org.springframework.web.bind.annotation.GetMapping;
 
 
 @RestController
@@ -44,6 +44,7 @@ public class InternshipController {
         return ResponseEntity.ok("Internship created successfully");
     }
 
+    //For student
     @GetMapping("/all")
     public ResponseEntity<List<InternshipResposeDTO>> getAllInternship() {
             return ResponseEntity.ok(internshipService.getAllInternships());
@@ -97,6 +98,18 @@ public class InternshipController {
         return ResponseEntity
                 .status(200)
                 .body(response);
+    }
+
+    /* Get all internships posted by a specific industry */
+    @GetMapping("/my-internships")
+    public ResponseEntity<List<InternshipResposeDTO>> getMyInternships(Authentication authentication) {
+
+        CustomUserDetails userDetails =
+        (CustomUserDetails) authentication.getPrincipal();
+
+        String email = userDetails.getUsername(); // Assuming username is the email
+        List<InternshipResposeDTO> internships = internshipService.getMyInternships(email);
+        return ResponseEntity.ok(internships);
     }
 
 }

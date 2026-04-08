@@ -3,11 +3,14 @@ package com.example.Smart_Education.controller.studentController;
 import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.IndustryInternshipResponseDTO;
 import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.InternshipResposeDTO;
 import com.example.Smart_Education.DTOs.studentDTO.StudentApplicationResponseDTO;
+import com.example.Smart_Education.DTOs.studentDTO.StudentProfileDTO;
+import com.example.Smart_Education.config.CustomUserDetails;
 import com.example.Smart_Education.entity.student_entity.Student;
 import com.example.Smart_Education.service.internshipservice.InternshipServiceImpl;
 import com.example.Smart_Education.service.studentSerivce.StudentService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,7 +23,6 @@ public class StudentController {
     private final StudentService studentService;
 
     private final InternshipServiceImpl internshipService;
-    
 
     public StudentController(StudentService studentService, InternshipServiceImpl internshipService) {
         this.studentService = studentService;
@@ -45,6 +47,17 @@ public class StudentController {
         Student student = studentService.getStudentById(id);
         return ResponseEntity.ok(student); // 200 OK
     }
+
+    @GetMapping("/profile")
+    public ResponseEntity<StudentProfileDTO> getStudentProfile(Authentication authentication) {
+    CustomUserDetails userDetails =
+            (CustomUserDetails) authentication.getPrincipal();
+
+    String email = userDetails.getUsername(); // Assuming username is the email
+    return ResponseEntity.ok(studentService.getStudentProfile(email));
+    }
+
+    
 
     /* Get all students */
     @GetMapping

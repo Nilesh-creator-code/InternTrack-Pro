@@ -1,5 +1,6 @@
 package com.example.Smart_Education.service.studentSerivce;
 
+import com.example.Smart_Education.DTOs.studentDTO.StudentProfileDTO;
 import com.example.Smart_Education.entity.Role;
 import com.example.Smart_Education.entity.User;
 import com.example.Smart_Education.entity.student_entity.Student;
@@ -11,11 +12,15 @@ import com.example.Smart_Education.repository.mysql.UserRepository;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 @Service
 public class StudentService {
 
+
+//    @Autowired
+//    private Authentication authentication;
 
 /*     MYSQL repository
  */ @Autowired
@@ -51,6 +56,24 @@ public class StudentService {
         return studentRepository.save(student);
     }
     
+   /* Get Student profile*/
+   public StudentProfileDTO getStudentProfile(String email) {
+        // Find the student by email
+        Student student = studentRepository.findByUser_Email(email)
+                .orElseThrow(() -> new RuntimeException("Student with email " + email + " not found"));
+
+        // Map the Student entity to StudentProfileDTO
+        return StudentProfileDTO.builder()
+                .id(student.getId())
+                .name(student.getName())
+                .department(student.getDepartment())
+                .collegeName(student.getCollegeName())
+                .email(student.getUser().getEmail())
+                .contactNumber(student.getUser().getContactNumber())
+                .educationStatus(student.getEducationStatus())
+                .build();
+    }
+
 
     /* Get Student by id */
     public Student getStudentById(Long id) {
@@ -71,7 +94,7 @@ public class StudentService {
         // Update fields
         existingStudent.setName(updatedStudent.getName());
         existingStudent.setDepartment(updatedStudent.getDepartment());
-        existingStudent.setCollege(updatedStudent.getCollege());
+        existingStudent.setCollegeName(updatedStudent.getCollegeName());
 
         // 🔥 Update contact number from User
         if (updatedStudent.getUser() != null) {
