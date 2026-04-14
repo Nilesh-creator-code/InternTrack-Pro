@@ -8,6 +8,7 @@ import java.util.Optional;
 public interface IndustryRepository extends JpaRepository<Industry, Long>{
     Optional<Industry> findByName(String name);
 
-    Optional<Industry> findByUserEmail(String email);
+    Optional<Industry> findByUserEmail(String industryEmail);
 
+//    Optional<Industry> findByUser_Email(String industryEmail);
 }

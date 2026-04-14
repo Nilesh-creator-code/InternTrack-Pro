@@ -20,4 +20,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
 
     List<Application> findByIndustry_Id(Long industryId);
 
+    List<Application> findByInternship_Industry_Id(Long industryId);
+
+
 }

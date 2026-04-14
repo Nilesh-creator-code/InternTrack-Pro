@@ -9,6 +9,7 @@ import lombok.*;
 
 
 @Entity
+@Table(name = "internships")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -27,6 +28,7 @@ public class Internship {
     private String location;
     private LocalDate startDate;
     private LocalDate endDate;
+    @Column(name = "last_date_to_apply")
     private LocalDate lastDateToApply;
     private String type;
     @Enumerated(EnumType.STRING)

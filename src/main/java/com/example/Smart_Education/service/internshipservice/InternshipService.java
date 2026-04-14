@@ -4,6 +4,7 @@ import com.example.Smart_Education.DTOs.industryDTO.IndustryApplicationResponseD
 import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.IndustryInternshipResponseDTO;
 import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.InternshipCreateDTO;
 import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.InternshipResposeDTO;
+import com.example.Smart_Education.DTOs.studentDTO.ApplicationResponseDTO;
 import com.example.Smart_Education.DTOs.studentDTO.StudentApplicationResponseDTO;
 import com.example.Smart_Education.entity.industry_entity.Internship;
 
@@ -38,5 +39,8 @@ public interface InternshipService {
 
     //For industry dashboard - Get all internships posted by the industry
     public List<InternshipResposeDTO> getMyInternships(String email);
+
+    
+    public List<ApplicationResponseDTO> getApplicationsForMyInternship(String email);
 
 }

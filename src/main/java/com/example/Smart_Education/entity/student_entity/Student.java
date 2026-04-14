@@ -26,6 +26,7 @@ public class Student {
 
     private String department;
 
+    @Column(name = "college_name")
     private String CollegeName;
 
 

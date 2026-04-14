@@ -1,8 +1,10 @@
 package com.example.Smart_Education.controller.industryController;
 
+import com.example.Smart_Education.service.industryService.IndustryService;
 import com.example.Smart_Education.service.internshipservice.InternshipService;
 import com.example.Smart_Education.service.studentSerivce.StudentService;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,9 +25,12 @@ public class IndustryController {
 
     private final StudentService studentService;
 
-    public IndustryController(InternshipService internshipService, StudentService studentService) {
+    private final IndustryService industryService;
+
+    public IndustryController(InternshipService internshipService, StudentService studentService, IndustryService industryService) {
         this.internshipService = internshipService;
         this.studentService = studentService;
+        this.industryService = industryService;
     }
 
     @GetMapping("/hello")
@@ -42,6 +47,12 @@ public class IndustryController {
     @GetMapping("/industry/student")
     public ResponseEntity<Student> getStudentById(@RequestParam Long id) {
         return ResponseEntity.ok(studentService.getStudentById(id));
+    }
+
+    /* Get industry profile */
+    @GetMapping("/profile")
+    public ResponseEntity<?> getIndustryProfile() {
+        return ResponseEntity.ok(industryService.getIndustryProfile());
     }
 
 }

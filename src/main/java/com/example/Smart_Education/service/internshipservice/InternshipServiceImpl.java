@@ -4,6 +4,7 @@ import com.example.Smart_Education.DTOs.industryDTO.IndustryApplicationResponseD
 import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.IndustryInternshipResponseDTO;
 import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.InternshipCreateDTO;
 import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.InternshipResposeDTO;
+import com.example.Smart_Education.DTOs.studentDTO.ApplicationResponseDTO;
 import com.example.Smart_Education.DTOs.studentDTO.StudentApplicationResponseDTO;
 import com.example.Smart_Education.entity.industry_entity.Industry;
 import com.example.Smart_Education.entity.industry_entity.Internship;
@@ -30,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -58,6 +60,7 @@ public class InternshipServiceImpl implements InternshipService {
                 if (dto.getLastDateToApply().isAfter(dto.getStartDate())) {
                         throw new RuntimeException("Last date to apply must be before start date");
                 }
+
 
                 Industry industry = industryRepository
                                 .findByUserEmail(email)
@@ -263,29 +266,33 @@ public class InternshipServiceImpl implements InternshipService {
                                 .build());
         }
 
-        /* Apply internship for logged-in student */
         @Override
         public String applyForInternship(Long internshipId) {
 
-                // Get logged-in user
-                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-                String email = authentication.getName();
-
-                // Assuming StudentRepository and ApplicationRepository are injected
-                // private final StudentRepository studentRepository;
-                // private final ApplicationRepository applicationRepository;
+                String email = SecurityContextHolder.getContext()
+                        .getAuthentication()
+                        .getName();
 
                 Student student = studentRepository.findByUser_Email(email)
-                                .orElseThrow(() -> new RuntimeException("Student not found"));
+                        .orElseThrow(() -> new RuntimeException("Student not found"));
 
                 Internship internship = internshipRepository.findById(internshipId)
-                                .orElseThrow(() -> new RuntimeException("Internship not found"));
+                        .orElseThrow(() -> new RuntimeException("Internship not found"));
 
-                Industry industry = internship.getIndustry();
+                // ✅ Extract once (clean code)
+                LocalDate lastDate = internship.getLastDateToApply();
 
-                if (internship.getStatus() != InternshipStatus.OPEN
-                                || internship.getLastDateToApply().isBefore(LocalDate.now())) {
-                        throw new RuntimeException("Cannot apply for this internship");
+                // ✅ Safe validation
+                if (internship.getStatus() != InternshipStatus.OPEN) {
+                        throw new RuntimeException("Internship is not open");
+                }
+
+                if (lastDate == null) {
+                        throw new RuntimeException("Last date to apply is not set");
+                }
+
+                if (lastDate.isBefore(LocalDate.now())) {
+                        throw new RuntimeException("Application deadline has passed");
                 }
 
                 if (applicationRepository.existsByStudentAndInternship(student, internship)) {
@@ -293,12 +300,12 @@ public class InternshipServiceImpl implements InternshipService {
                 }
 
                 Application application = Application.builder()
-                                .student(student)
-                                .internship(internship)
-                                .industry(industry)
-                                .status(Applicationstatus.APPLIED)
-                                .applicationDate(LocalDate.now())
-                                .build();
+                        .student(student)
+                        .internship(internship)
+                        .industry(internship.getIndustry()) // no need separate variable
+                        .status(Applicationstatus.APPLIED)
+                        .applicationDate(LocalDate.now())
+                        .build();
 
                 applicationRepository.save(application);
 
@@ -395,5 +402,43 @@ public class InternshipServiceImpl implements InternshipService {
                                                 .build())
                                 .toList();
         }
+/* get Student application where they have applied for internship of that industry - for industry dashboard
+         */
+        public List<ApplicationResponseDTO> getApplicationsForMyInternship(String email) {
 
+//                Industry industry = industryRepository.findByUserEmail(email)
+//                                .orElseThrow(() -> new RuntimeException("Industry not found"));
+
+//                List<Application> applications = applicationRepository.findByInternship_Industry_Id(industry.getId());
+
+                Student student = studentRepository.findByUser_Email(email)
+                                .orElseThrow(() -> new RuntimeException("Student not found"));
+
+                List<Application> applications = applicationRepository.findByStudentId(student.getId());
+
+
+                return applications.stream().map(app -> {
+                        ApplicationResponseDTO dto = new ApplicationResponseDTO();
+
+                        // Appl ion info
+                        dto.setId(app.getId());
+                        dto.setApplicationDate(app.getApplicationDate());
+                        dto.setStatus(app.getStatus());
+
+                        dto.setIndustryName(app.getIndustry().getName());
+                        dto.setInternshipTitle(app.getInternship().getTitle());
+                        dto.setInternshipDomain(app.getInternship().getDomain());
+                        dto.setInternshipDescription(app.getInternship().getShortDescription());
+
+                        // Student info
+                        dto.setStudentId(app.getStudent().getId());
+
+                        // Internship info
+                        dto.setInternshipId(app.getInternship().getId());
+
+                        dto.setIndustryId(app.getIndustry().getId());
+
+                        return dto;
+                }).toList();
+        }
 }

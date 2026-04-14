@@ -29,6 +29,7 @@ public class User {
     @NotBlank(message = "Password is required")
     private String password;
 
+    @Column(name = "contact_number", nullable = false)
     @NotBlank(message = "Contact number is required")
     private String contactNumber;
 

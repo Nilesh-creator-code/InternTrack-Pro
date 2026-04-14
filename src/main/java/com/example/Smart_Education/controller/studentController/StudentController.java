@@ -2,15 +2,18 @@ package com.example.Smart_Education.controller.studentController;
 
 import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.IndustryInternshipResponseDTO;
 import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.InternshipResposeDTO;
+import com.example.Smart_Education.DTOs.studentDTO.ApplicationResponseDTO;
 import com.example.Smart_Education.DTOs.studentDTO.StudentApplicationResponseDTO;
 import com.example.Smart_Education.DTOs.studentDTO.StudentProfileDTO;
 import com.example.Smart_Education.config.CustomUserDetails;
+import com.example.Smart_Education.entity.User;
 import com.example.Smart_Education.entity.student_entity.Student;
 import com.example.Smart_Education.service.internshipservice.InternshipServiceImpl;
 import com.example.Smart_Education.service.studentSerivce.StudentService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -113,18 +116,27 @@ public class StudentController {
 
         /* apply for internship */
     @PostMapping("/apply/{internshipId}")
-    public ResponseEntity<String> applyForInternship(@PathVariable Long internshipId) {
+    public ResponseEntity<String> applyForInternship(@PathVariable Long internshipId, Authentication authentication) {
+//        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+//        String email = userDetails.getUsername(); // Assuming username is the email
+
         String response = internshipService.applyForInternship(internshipId);
         return ResponseEntity.ok(response); // 200 OK with response message
     }
 
-    /* get student's applications */
+    /* get student's applications where they have applied */
     @GetMapping("/applications")
-    public ResponseEntity<List<StudentApplicationResponseDTO>> getStudentApplications() {
-        List<StudentApplicationResponseDTO> applications = internshipService.getApplicationDtoByStudent();
+    public ResponseEntity<List<ApplicationResponseDTO>> getStudentApplications(Authentication authentication) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String email = userDetails.getUsername(); // Assuming username is the email
+
+        List<ApplicationResponseDTO> applications = internshipService.getApplicationsForMyInternship(email);
         return ResponseEntity.ok(applications);
     }
 
+
+
+    
 
 
 }

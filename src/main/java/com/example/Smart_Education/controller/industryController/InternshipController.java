@@ -86,7 +86,7 @@ public class InternshipController {
         internshipService.deleteInternship(id, email);
 
         return ResponseEntity.ok("Internship deleted successfully");
-    }   
+    }
 
     @GetMapping("/all/pagination")
     public ResponseEntity<List<InternshipResposeDTO>> getAllInternshipsByPage(

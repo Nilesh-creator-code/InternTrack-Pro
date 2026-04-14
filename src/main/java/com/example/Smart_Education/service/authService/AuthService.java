@@ -57,58 +57,9 @@ public class AuthService {
 
 
     //    For the registration of the student
-    @Transactional
-    public Student registerStudent(StudentRegistrationDTO dto) {
-
-
-        // 1️⃣ Check duplicate email
-        if (userRepository.existsByEmail(dto.getEmail())) {
-            throw new RuntimeException("Email already registered");
-        }
-
-
-        // 1️⃣ Validate Education Status
-        if (dto.getEducationStatus() == null) {
-            throw new RuntimeException("Education status is required");
-        }
-
-
-        // 3️⃣ Handle College Based on Education Status
-//        College college = null;
-
-//        if (dto.getEducationStatus() == EducationStatus.CURRENT) {
-//            if (dto.getCollegeId() == null) {
-//                throw new RuntimeException("College is required for current students");
-//            }
-//
-//            college = collegeRepository.findById(dto.getCollegeId())
-//                    .orElseThrow(() -> new RuntimeException("College not found"));
-//        }
-
-        // 2. Create User
-        User user = User.builder()
-                .email(dto.getEmail())
-                .password(passwordEncoder.encode(dto.getPassword()))
-                .contactNumber(dto.getContactNumber())
-                .role(Role.STUDENT)
-                .build();
-
-        userRepository.save(user);
-
-        // 4️⃣ Create Student
-        Student student = Student.builder()
-                .name(dto.getName())
-                .department(dto.getDepartment())
-                .educationStatus(dto.getEducationStatus())
-                .user(user)
-                .CollegeName(dto.getCollegeName())
-                .build();
-
-        return studentRepository.save(student);
-    }
-
 
     //For login the industry and student
+
     @Transactional
     public AuthResponse login(LoginRequest request) {
 
@@ -137,6 +88,60 @@ public class AuthService {
                 user.getRole().name()
         );
     }
+
+
+        @Transactional
+        public Student registerStudent(StudentRegistrationDTO dto) {
+
+
+            // 1️⃣ Check duplicate email
+            if (userRepository.existsByEmail(dto.getEmail())) {
+                throw new RuntimeException("Email already registered");
+            }
+
+
+            // 1️⃣ Validate Education Status
+            if (dto.getEducationStatus() == null) {
+                throw new RuntimeException("Education status is required");
+            }
+
+
+            // 3️⃣ Handle College Based on Education Status
+    //        College college = null;
+
+    //        if (dto.getEducationStatus() == EducationStatus.CURRENT) {
+    //            if (dto.getCollegeId() == null) {
+    //                throw new RuntimeException("College is required for current students");
+    //            }
+    //
+    //            college = collegeRepository.findById(dto.getCollegeId())
+    //                    .orElseThrow(() -> new RuntimeException("College not found"));
+    //        }
+
+            // 2. Create User
+            User user = User.builder()
+                    .email(dto.getEmail())
+                    .password(passwordEncoder.encode(dto.getPassword()))
+                    .contactNumber(dto.getContactNumber())
+                    .role(Role.STUDENT)
+                    .build();
+
+            userRepository.save(user);
+
+
+            // 4️⃣ Create Student
+            Student student = Student.builder()
+                    .name(dto.getName())
+                    .department(dto.getDepartment())
+                    .educationStatus(dto.getEducationStatus())
+                    .user(user)
+                    .CollegeName(dto.getCollegeName())
+                    .build();
+
+            System.out.println("Contact Number: " + dto.getContactNumber());
+
+            return studentRepository.save(student);
+        }
 
 
     //For forgetting the password for student they send the otp
