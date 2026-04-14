@@ -1,20 +1,19 @@
 package com.example.Smart_Education.controller.industryController;
 
+import com.example.Smart_Education.DTOs.industryDTO.IndustryProfileDTO;
+import com.example.Smart_Education.DTOs.industryDTO.IndustryUpdateProfileDTO;
 import com.example.Smart_Education.service.industryService.IndustryService;
 import com.example.Smart_Education.service.internshipservice.InternshipService;
 import com.example.Smart_Education.service.studentSerivce.StudentService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.example.Smart_Education.DTOs.industryDTO.IndustryApplicationResponseDTO;
 import com.example.Smart_Education.entity.student_entity.Student;
 
 import java.util.List;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 @RestController
@@ -54,5 +53,16 @@ public class IndustryController {
     public ResponseEntity<?> getIndustryProfile() {
         return ResponseEntity.ok(industryService.getIndustryProfile());
     }
+
+    /* Update industry profile */
+    @PutMapping("/profile/update")
+    public ResponseEntity<?> updateIndustryProfile(
+            @RequestBody IndustryUpdateProfileDTO industryUpdateProfileDTO) {
+
+        return ResponseEntity.ok(
+                industryService.updateIndustryProfile(industryUpdateProfileDTO)
+        );
+    }
+
 
 }
