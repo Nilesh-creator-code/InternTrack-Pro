@@ -1,4 +1,4 @@
-package com.example.Smart_Education.DTOs.industryDTO.internshipDTO;
+package com.example.Smart_Education.DTOs.IndustryPackageDto.internshipDTO;
 
 import jakarta.validation.constraints.*;
 import lombok.*;

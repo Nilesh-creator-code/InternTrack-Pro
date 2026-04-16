@@ -1,12 +1,11 @@
 package com.example.Smart_Education.service.internshipservice;
 
-import com.example.Smart_Education.DTOs.industryDTO.IndustryApplicationResponseDTO;
-import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.IndustryInternshipResponseDTO;
-import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.InternshipCreateDTO;
-import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.InternshipResposeDTO;
+import com.example.Smart_Education.DTOs.IndustryPackageDto.industryDTO.IndustryApplicationResponseDTO;
+import com.example.Smart_Education.DTOs.IndustryPackageDto.internshipDTO.IndustryInternshipResponseDTO;
+import com.example.Smart_Education.DTOs.IndustryPackageDto.internshipDTO.InternshipCreateDTO;
+import com.example.Smart_Education.DTOs.IndustryPackageDto.internshipDTO.InternshipResposeDTO;
 import com.example.Smart_Education.DTOs.studentDTO.ApplicationResponseDTO;
 import com.example.Smart_Education.DTOs.studentDTO.StudentApplicationResponseDTO;
-import com.example.Smart_Education.entity.industry_entity.Internship;
 
 import org.springframework.data.domain.Page;
 
@@ -15,15 +14,19 @@ import java.util.List;
 
 public interface InternshipService {
 
-    void createInternship(InternshipCreateDTO dto, String email);
+    String createInternship(InternshipCreateDTO dto, String email);
 
     List<InternshipResposeDTO> getAllInternships();
 
     IndustryInternshipResponseDTO getInternshipById(Long id);
 
+    IndustryInternshipResponseDTO getInternshipForIndustry(Long id);
+
+    IndustryInternshipResponseDTO getInternshipForStudent();
+
     List<InternshipResposeDTO> getInternshipsByDomain(String domain);
 
-    IndustryInternshipResponseDTO updateInternship(Long id, InternshipCreateDTO dto, String email);
+    IndustryInternshipResponseDTO updateInternship(InternshipCreateDTO dto);
 
     String deleteInternship(Long id, String email);
 

@@ -1,6 +1,5 @@
 package com.example.Smart_Education.repository.mysql.industry;
 
-import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.IndustryInternshipResponseDTO;
 import com.example.Smart_Education.entity.industry_entity.Internship;
 import com.example.Smart_Education.entity.industry_entity.InternshipStatus;
 import org.springframework.data.domain.Page;
@@ -12,6 +11,7 @@ import java.util.List;
 public interface InternshipRepository extends JpaRepository<Internship, Long> {
 
     List<Internship> findByIndustryId(Long industryId);
+
 
     List<Internship> findByDomainIgnoreCase(String domain);
 
