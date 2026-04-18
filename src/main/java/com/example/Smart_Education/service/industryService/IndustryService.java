@@ -3,11 +3,10 @@ package com.example.Smart_Education.service.industryService;
 import com.example.Smart_Education.entity.industry_entity.Industry;
 import com.example.Smart_Education.repository.mysql.industry.IndustryRepository;
 
-import org.hibernate.sql.Update;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.example.Smart_Education.DTOs.industryDTO.IndustryProfileDTO;
-import com.example.Smart_Education.DTOs.industryDTO.IndustryUpdateProfileDTO;
+import com.example.Smart_Education.DTOs.industryDtoPackage.industryDTO.IndustryProfileDTO;
+import com.example.Smart_Education.DTOs.industryDtoPackage.industryDTO.IndustryUpdateProfileDTO;
 
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;

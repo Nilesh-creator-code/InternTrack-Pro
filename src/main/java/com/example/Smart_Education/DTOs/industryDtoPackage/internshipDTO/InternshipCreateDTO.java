@@ -1,4 +1,4 @@
-package com.example.Smart_Education.DTOs.industryDTO.internshipDTO;
+package com.example.Smart_Education.DTOs.industryDtoPackage.internshipDTO;
 
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -15,6 +15,10 @@ import java.util.List;
 public class InternshipCreateDTO {
 
     // ===== SQL Fields =====
+    @NotNull
+    @Pattern(regexp = "^[A-Za-z ]+$", message = "Name must contain only letters")
+    private String name;
+
     @NotBlank
     private String title;
 

@@ -1,9 +1,10 @@
 package com.example.Smart_Education.controller.industryController;
 
 
-import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.IndustryInternshipResponseDTO;
-import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.InternshipCreateDTO;
-import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.InternshipResposeDTO;
+import com.example.Smart_Education.DTOs.industryDtoPackage.internshipDTO.IndustryInternshipResponseDTO;
+import com.example.Smart_Education.DTOs.industryDtoPackage.internshipDTO.InternshipCreateDTO;
+import com.example.Smart_Education.DTOs.industryDtoPackage.internshipDTO.InternshipResposeDTO;
+import com.example.Smart_Education.DTOs.industryDtoPackage.internshipDTO.UpdateInternshipDTO;
 import com.example.Smart_Education.config.CustomUserDetails;
 import com.example.Smart_Education.service.authService.AuthService;
 import com.example.Smart_Education.service.internshipservice.InternshipServiceImpl;
@@ -66,13 +67,9 @@ public class InternshipController {
     @PutMapping("/update/{id}")
     public ResponseEntity<?> updateInternship(
             @PathVariable Long id,
-            @Valid @RequestBody InternshipCreateDTO dto,
-            Authentication authentication
-    ) {
+            @Valid @RequestBody UpdateInternshipDTO dto) {
 
-        String email = authentication.getName();
-
-        internshipService.updateInternship(id, dto, email);
+        internshipService.updateInternship(id, dto);
 
         return ResponseEntity.ok("Internship updated successfully");
     }

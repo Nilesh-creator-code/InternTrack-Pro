@@ -1,17 +1,16 @@
-package com.example.Smart_Education.DTOs.industryDTO.internshipDTO;
+package com.example.Smart_Education.DTOs.industryDtoPackage.internshipDTO;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
 
 @Getter
 @Setter
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
-public class IndustryInternshipResponseDTO {
+public class InternshipResposeDTO {
 
     private Long id;
     private String title;
@@ -23,7 +22,4 @@ public class IndustryInternshipResponseDTO {
     private LocalDate endDate;
     private LocalDate lastDateToApply;
     private String type;
-    private String fullDescription;
-    private List<String> skillRequired;
-    private List<String> responsibilities;
 }

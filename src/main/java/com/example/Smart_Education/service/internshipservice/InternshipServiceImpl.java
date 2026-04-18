@@ -1,9 +1,10 @@
 package com.example.Smart_Education.service.internshipservice;
 
-import com.example.Smart_Education.DTOs.industryDTO.IndustryApplicationResponseDTO;
-import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.IndustryInternshipResponseDTO;
-import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.InternshipCreateDTO;
-import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.InternshipResposeDTO;
+import com.example.Smart_Education.DTOs.industryDtoPackage.industryDTO.IndustryApplicationResponseDTO;
+import com.example.Smart_Education.DTOs.industryDtoPackage.internshipDTO.IndustryInternshipResponseDTO;
+import com.example.Smart_Education.DTOs.industryDtoPackage.internshipDTO.InternshipCreateDTO;
+import com.example.Smart_Education.DTOs.industryDtoPackage.internshipDTO.InternshipResposeDTO;
+import com.example.Smart_Education.DTOs.industryDtoPackage.internshipDTO.UpdateInternshipDTO;
 import com.example.Smart_Education.DTOs.studentDTO.ApplicationResponseDTO;
 import com.example.Smart_Education.DTOs.studentDTO.StudentApplicationResponseDTO;
 import com.example.Smart_Education.entity.industry_entity.Industry;
@@ -31,7 +32,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -49,6 +49,8 @@ public class InternshipServiceImpl implements InternshipService {
         // Application repo
         private final ApplicationRepository applicationRepository;
 
+
+        /* This is for  industry to create internship */
         @Transactional
         @Override
         public void createInternship(InternshipCreateDTO dto, String email) {
@@ -92,6 +94,69 @@ public class InternshipServiceImpl implements InternshipService {
                 detailsRepository.save(details);
         }
 
+
+        @Transactional
+        @Override
+        public IndustryInternshipResponseDTO updateInternship(Long id, UpdateInternshipDTO dto) {
+
+                // 🔐 Get logged-in user
+                String email = SecurityContextHolder.getContext()
+                        .getAuthentication()
+                        .getName();
+
+                Industry industry = industryRepository
+                        .findByUserEmail(email)
+                        .orElseThrow(() -> new RuntimeException("Industry not found"));
+
+                // 🔐 Fetch only own internship
+                Internship internship = internshipRepository
+                        .findByIdAndIndustryId(id, industry.getId())
+                        .orElseThrow(() -> new RuntimeException("Internship not found or unauthorized"));
+
+                // ===== Update SQL Fields =====
+                internship.setTitle(dto.getTitle());
+                internship.setShortDescription(dto.getShortDescription());
+                internship.setDomain(dto.getDomain());
+                internship.setStipend(dto.getStipend());
+                internship.setLocation(dto.getLocation());
+                internship.setStartDate(dto.getStartDate());
+                internship.setEndDate(dto.getEndDate());
+                internship.setLastDateToApply(dto.getLastDateToApply());
+                internship.setType(dto.getType());
+
+                internshipRepository.save(internship);
+
+                // ===== Update MongoDB Fields =====
+                InternshipDetails details = detailsRepository
+                        .findByInternshipId(internship.getId())
+                        .orElseThrow(() -> new RuntimeException("Internship details not found"));
+
+                details.setFullDescription(dto.getFullDescription());
+                details.setSkillsRequired(dto.getSkillsRequired());
+                details.setResponsibilities(dto.getResponsibilities());
+
+                detailsRepository.save(details);
+
+                // ===== Return Response =====
+                return IndustryInternshipResponseDTO.builder()
+                        .id(internship.getId())
+                        .title(internship.getTitle())
+                        .shortDescription(internship.getShortDescription())
+                        .domain(internship.getDomain())
+                        .stipend(internship.getStipend())
+                        .location(internship.getLocation())
+                        .startDate(internship.getStartDate())
+                        .endDate(internship.getEndDate())
+                        .lastDateToApply(internship.getLastDateToApply())
+                        .type(internship.getType())
+
+                        .fullDescription(details.getFullDescription())
+                        .skillRequired(details.getSkillsRequired())
+                        .responsibilities(details.getResponsibilities())
+                        .build();
+        }
+
+
         @Transactional
         @Override
         public List<InternshipResposeDTO> getAllInternships() {
@@ -118,15 +183,30 @@ public class InternshipServiceImpl implements InternshipService {
                                 .toList();
         }
 
+
         /* Get internship by ID */
         @Transactional
         @Override
         public IndustryInternshipResponseDTO getInternshipById(Long id) {
+
+                String email = SecurityContextHolder.getContext()
+                                .getAuthentication()
+                                .getName();
+
+                Industry industry = industryRepository
+                                .findByUserEmail(email)
+                                .orElseThrow(() -> new RuntimeException("Industry not found"));
+
                 Internship internship = internshipRepository.findById(id)
                                 .orElseThrow(() -> new RuntimeException("Internship not found"));
 
+                if (!internship.getIndustry().getId().equals(industry.getId())) {
+                        throw new RuntimeException("You are not authorized to view this internship");
+                }
+
                 InternshipDetails details = detailsRepository.findByInternshipId(internship.getId())
                                 .orElseThrow(() -> new RuntimeException("Internship details not found"));
+
 
                 return IndustryInternshipResponseDTO.builder()
                                 .id(internship.getId())
@@ -192,58 +272,6 @@ public class InternshipServiceImpl implements InternshipService {
                 internshipRepository.deleteById(id);
 
                 return "Internship deleted successfully";
-        }
-
-        /* Update internship */
-        @Transactional
-        @Override
-        public IndustryInternshipResponseDTO updateInternship(Long id, InternshipCreateDTO dto, String email) {
-
-                Industry industry = industryRepository
-                                .findByUserEmail(email)
-                                .orElseThrow(() -> new RuntimeException("Industry not found"));
-
-                Internship internship = internshipRepository.findById(id)
-                                .orElseThrow(() -> new RuntimeException("Internship not found"));
-
-                // Ownership validation
-                if (!internship.getIndustry().getId().equals(industry.getId())) {
-                        throw new RuntimeException("You are not authorized to update this internship");
-                }
-
-                // Date validation
-                if (dto.getEndDate().isBefore(dto.getStartDate())) {
-                        throw new RuntimeException("End date must be after start date");
-                }
-
-                if (dto.getLastDateToApply().isAfter(dto.getStartDate())) {
-                        throw new RuntimeException("Last date to apply must be before start date");
-                }
-
-                // Update SQL data
-                internship.setTitle(dto.getTitle());
-                internship.setShortDescription(dto.getShortDescription());
-                internship.setDomain(dto.getDomain());
-                internship.setStipend(dto.getStipend());
-                internship.setLocation(dto.getLocation());
-                internship.setStartDate(dto.getStartDate());
-                internship.setEndDate(dto.getEndDate());
-                internship.setLastDateToApply(dto.getLastDateToApply());
-                internship.setType(dto.getType());
-
-                internshipRepository.save(internship);
-
-                // Update MongoDB details
-                InternshipDetails details = detailsRepository.findByInternshipId(id)
-                                .orElseThrow(() -> new RuntimeException("Internship details not found"));
-
-                details.setFullDescription(dto.getFullDescription());
-                details.setSkillsRequired(dto.getSkillsRequired());
-                details.setResponsibilities(dto.getResponsibilities());
-
-                detailsRepository.save(details);
-
-                return getInternshipById(id);
         }
 
         public Page<InternshipResposeDTO> getAllInternshipsByPage(int page, int size) {
