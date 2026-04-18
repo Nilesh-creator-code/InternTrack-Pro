@@ -1,4 +1,4 @@
-package com.example.Smart_Education.DTOs.IndustryPackageDto.industryDTO;
+package com.example.Smart_Education.DTOs.industryDTO;
 
 import lombok.*;
 

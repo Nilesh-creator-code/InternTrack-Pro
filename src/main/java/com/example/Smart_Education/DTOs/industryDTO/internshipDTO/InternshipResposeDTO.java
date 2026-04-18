@@ -1,4 +1,4 @@
-package com.example.Smart_Education.DTOs.IndustryPackageDto.internshipDTO;
+package com.example.Smart_Education.DTOs.industryDTO.internshipDTO;
 
 import lombok.Builder;
 import lombok.Getter;

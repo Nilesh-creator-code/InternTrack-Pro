@@ -1,9 +1,9 @@
 package com.example.Smart_Education.controller.industryController;
 
 
-import com.example.Smart_Education.DTOs.IndustryPackageDto.internshipDTO.IndustryInternshipResponseDTO;
-import com.example.Smart_Education.DTOs.IndustryPackageDto.internshipDTO.InternshipCreateDTO;
-import com.example.Smart_Education.DTOs.IndustryPackageDto.internshipDTO.InternshipResposeDTO;
+import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.IndustryInternshipResponseDTO;
+import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.InternshipCreateDTO;
+import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.InternshipResposeDTO;
 import com.example.Smart_Education.config.CustomUserDetails;
 import com.example.Smart_Education.service.authService.AuthService;
 import com.example.Smart_Education.service.internshipservice.InternshipServiceImpl;
@@ -41,7 +41,6 @@ public class InternshipController {
 
         internshipService.createInternship(dto, email);
 
-
         return ResponseEntity.ok("Internship created successfully");
     }
 
@@ -51,25 +50,11 @@ public class InternshipController {
             return ResponseEntity.ok(internshipService.getAllInternships());
     }
 
-    /* Get all internships posted by a specific industry */
-    @GetMapping("/my-internships")
-    public ResponseEntity<List<InternshipResposeDTO>> getMyInternships(Authentication authentication) {
-
-        CustomUserDetails userDetails =
-                (CustomUserDetails) authentication.getPrincipal();
-
-        String email = userDetails.getUsername(); // Assuming username is the email
-        List<InternshipResposeDTO> internships = internshipService.getMyInternships(email);
-        return ResponseEntity.ok(internships);
-    }
-
-    //This is for industry to view there particular internship
     @GetMapping("/view/{id}")
-    public ResponseEntity<IndustryInternshipResponseDTO> getInternship(@PathVariable Long id) {
-        IndustryInternshipResponseDTO internship = internshipService.getInternshipForIndustry(id);
+    public ResponseEntity<IndustryInternshipResponseDTO> getMethodName(@PathVariable Long id) {
+        IndustryInternshipResponseDTO internship = internshipService.getInternshipById(id);
         return ResponseEntity.ok(internship);
     }
-
 
     @GetMapping("/domain/{domain}")
     public ResponseEntity<List<InternshipResposeDTO>> getInternshipsByDomain(@PathVariable String domain) {
@@ -78,12 +63,17 @@ public class InternshipController {
     }
     
     /* Update Internship */
-    @PutMapping("/update")
+    @PutMapping("/update/{id}")
     public ResponseEntity<?> updateInternship(
-            @Valid @RequestBody InternshipCreateDTO dto
+            @PathVariable Long id,
+            @Valid @RequestBody InternshipCreateDTO dto,
+            Authentication authentication
     ) {
 
-        internshipService.updateInternship(dto);
+        String email = authentication.getName();
+
+        internshipService.updateInternship(id, dto, email);
+
         return ResponseEntity.ok("Internship updated successfully");
     }
 
@@ -110,5 +100,16 @@ public class InternshipController {
                 .body(response);
     }
 
+    /* Get all internships posted by a specific industry */
+    @GetMapping("/my-internships")
+    public ResponseEntity<List<InternshipResposeDTO>> getMyInternships(Authentication authentication) {
+
+        CustomUserDetails userDetails =
+        (CustomUserDetails) authentication.getPrincipal();
+
+        String email = userDetails.getUsername(); // Assuming username is the email
+        List<InternshipResposeDTO> internships = internshipService.getMyInternships(email);
+        return ResponseEntity.ok(internships);
+    }
 
 }

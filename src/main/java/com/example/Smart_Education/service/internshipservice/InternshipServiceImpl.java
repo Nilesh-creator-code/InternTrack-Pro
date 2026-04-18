@@ -1,9 +1,9 @@
 package com.example.Smart_Education.service.internshipservice;
 
-import com.example.Smart_Education.DTOs.IndustryPackageDto.industryDTO.IndustryApplicationResponseDTO;
-import com.example.Smart_Education.DTOs.IndustryPackageDto.internshipDTO.IndustryInternshipResponseDTO;
-import com.example.Smart_Education.DTOs.IndustryPackageDto.internshipDTO.InternshipCreateDTO;
-import com.example.Smart_Education.DTOs.IndustryPackageDto.internshipDTO.InternshipResposeDTO;
+import com.example.Smart_Education.DTOs.industryDTO.IndustryApplicationResponseDTO;
+import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.IndustryInternshipResponseDTO;
+import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.InternshipCreateDTO;
+import com.example.Smart_Education.DTOs.industryDTO.internshipDTO.InternshipResposeDTO;
 import com.example.Smart_Education.DTOs.studentDTO.ApplicationResponseDTO;
 import com.example.Smart_Education.DTOs.studentDTO.StudentApplicationResponseDTO;
 import com.example.Smart_Education.entity.industry_entity.Industry;
@@ -31,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -50,18 +51,14 @@ public class InternshipServiceImpl implements InternshipService {
 
         @Transactional
         @Override
-        public String createInternship(InternshipCreateDTO dto, String email) {
+        public void createInternship(InternshipCreateDTO dto, String email) {
 
-                if (!dto.getEndDate().isAfter(dto.getStartDate())) {
+                if (dto.getEndDate().isAfter(dto.getStartDate())) {
                         throw new RuntimeException("End date must be after start date");
                 }
 
-                if (!dto.getLastDateToApply().isAfter(dto.getStartDate())) {
-                        throw new RuntimeException("Last date to apply must be before or equal to start date");
-                }
-
-                if (dto.getLastDateToApply().isAfter(dto.getEndDate())) {
-                        throw new RuntimeException("Last date to apply must be before or equal to End date");
+                if (dto.getLastDateToApply().isAfter(dto.getStartDate())) {
+                        throw new RuntimeException("Last date to apply must be before start date");
                 }
 
 
@@ -93,8 +90,6 @@ public class InternshipServiceImpl implements InternshipService {
                                 .build();
 
                 detailsRepository.save(details);
-
-                return "Internship created successfully";
         }
 
         @Transactional
@@ -123,87 +118,11 @@ public class InternshipServiceImpl implements InternshipService {
                                 .toList();
         }
 
-
-        /* Get internship by id */
+        /* Get internship by ID */
         @Transactional
         @Override
         public IndustryInternshipResponseDTO getInternshipById(Long id) {
-
                 Internship internship = internshipRepository.findById(id)
-                                .orElseThrow(() -> new RuntimeException("Internship not found"));
-
-                InternshipDetails details = detailsRepository.findByInternshipId(internship.getId())
-                                .orElseThrow(() -> new RuntimeException("Internship details not found"));
-
-                return IndustryInternshipResponseDTO.builder()
-                                .id(internship.getId())
-                                .title(internship.getTitle())
-                                .shortDescription(internship.getShortDescription())
-                                .domain(internship.getDomain())
-                                .stipend(internship.getStipend())
-                                .location(internship.getLocation())
-                                .startDate(internship.getStartDate())
-                                .endDate(internship.getEndDate())
-                                .lastDateToApply(internship.getLastDateToApply())
-                                .type(internship.getType())
-
-                                /* MongoDB data */
-                                .fullDescription(details.getFullDescription())
-                                .skillRequired(details.getSkillsRequired())
-                                .responsibilities(details.getResponsibilities())
-                                .build();
-        }
-
-        
-        /* Get Particular internship for industry */
-        @Transactional
-        @Override
-        public IndustryInternshipResponseDTO getInternshipForIndustry(Long id) {
-                
-                String email = SecurityContextHolder.getContext().getAuthentication().getName();
-                Industry industry = industryRepository
-                                .findByUserEmail(email)
-                                .orElseThrow(() -> new RuntimeException("Industry not found"));
-
-                Internship internship = internshipRepository.findById(id)
-                                .orElseThrow(() -> new RuntimeException("Internship not found"));
-
-                if (!internship.getIndustry().getId().equals(industry.getId())) {
-                        throw new RuntimeException("Unauthorized access to this internship");
-                }
-
-                InternshipDetails details = detailsRepository.findByInternshipId(internship.getId())
-                                .orElseThrow(() -> new RuntimeException("Internship details not found"));
-
-                return IndustryInternshipResponseDTO.builder()
-                                .id(internship.getId())
-                                .title(internship.getTitle())
-                                .shortDescription(internship.getShortDescription())
-                                .domain(internship.getDomain())
-                                .stipend(internship.getStipend())
-                                .location(internship.getLocation())
-                                .startDate(internship.getStartDate())
-                                .endDate(internship.getEndDate())
-                                .lastDateToApply(internship.getLastDateToApply())
-                                .type(internship.getType())
-
-                                /* MongoDB data */
-                                .fullDescription(details.getFullDescription())
-                                .skillRequired(details.getSkillsRequired())
-                                .responsibilities(details.getResponsibilities())
-                                .build();
-        }
-
-        /* Get Particular internship for student*/
-        @Transactional
-        @Override
-        public IndustryInternshipResponseDTO getInternshipForStudent() {
-                String email = SecurityContextHolder.getContext().getAuthentication().getName();
-                Student student = studentRepository
-                                .findByUser_Email(email)
-                                .orElseThrow(() -> new RuntimeException("Student not found"));
-
-                Internship internship = internshipRepository.findById(student.getId())
                                 .orElseThrow(() -> new RuntimeException("Internship not found"));
 
                 InternshipDetails details = detailsRepository.findByInternshipId(internship.getId())
@@ -278,15 +197,13 @@ public class InternshipServiceImpl implements InternshipService {
         /* Update internship */
         @Transactional
         @Override
-        public IndustryInternshipResponseDTO updateInternship(InternshipCreateDTO dto) {
-
-                String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        public IndustryInternshipResponseDTO updateInternship(Long id, InternshipCreateDTO dto, String email) {
 
                 Industry industry = industryRepository
                                 .findByUserEmail(email)
                                 .orElseThrow(() -> new RuntimeException("Industry not found"));
 
-                Internship internship = internshipRepository.findById(industry.getId())
+                Internship internship = internshipRepository.findById(id)
                                 .orElseThrow(() -> new RuntimeException("Internship not found"));
 
                 // Ownership validation
@@ -299,12 +216,8 @@ public class InternshipServiceImpl implements InternshipService {
                         throw new RuntimeException("End date must be after start date");
                 }
 
-                if (dto.getLastDateToApply().isBefore(dto.getStartDate())) {
-                        throw new RuntimeException("Last date to apply must be before or equal to start date");
-                }
-
-                if (dto.getLastDateToApply().isAfter(dto.getEndDate())) {
-                        throw new RuntimeException("Last date to apply must be before or equal to End date");
+                if (dto.getLastDateToApply().isAfter(dto.getStartDate())) {
+                        throw new RuntimeException("Last date to apply must be before start date");
                 }
 
                 // Update SQL data
@@ -321,7 +234,7 @@ public class InternshipServiceImpl implements InternshipService {
                 internshipRepository.save(internship);
 
                 // Update MongoDB details
-                InternshipDetails details = detailsRepository.findByInternshipId(industry.getId())
+                InternshipDetails details = detailsRepository.findByInternshipId(id)
                                 .orElseThrow(() -> new RuntimeException("Internship details not found"));
 
                 details.setFullDescription(dto.getFullDescription());
@@ -330,7 +243,7 @@ public class InternshipServiceImpl implements InternshipService {
 
                 detailsRepository.save(details);
 
-                return getInternshipById(industry.getId());
+                return getInternshipById(id);
         }
 
         public Page<InternshipResposeDTO> getAllInternshipsByPage(int page, int size) {
