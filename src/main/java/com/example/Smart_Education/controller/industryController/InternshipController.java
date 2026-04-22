@@ -32,6 +32,7 @@ public class InternshipController {
         return "Hello from Internship Controller";
     }
 
+
     @PostMapping("/create")
     public ResponseEntity<?> createInternship(
             @Valid @RequestBody InternshipCreateDTO dto,
@@ -63,7 +64,7 @@ public class InternshipController {
         return ResponseEntity.ok(internships);
     }
     
-    /* Update Internship */
+    /* Update Internship by industry*/
     @PutMapping("/update/{id}")
     public ResponseEntity<?> updateInternship(
             @PathVariable Long id,
@@ -85,6 +86,8 @@ public class InternshipController {
         return ResponseEntity.ok("Internship deleted successfully");
     }
 
+
+    //This is for student to get all internships in the pagination
     @GetMapping("/all/pagination")
     public ResponseEntity<List<InternshipResposeDTO>> getAllInternshipsByPage(
             @RequestParam(defaultValue = "0") int page,
@@ -108,5 +111,6 @@ public class InternshipController {
         List<InternshipResposeDTO> internships = internshipService.getMyInternships(email);
         return ResponseEntity.ok(internships);
     }
+
 
 }

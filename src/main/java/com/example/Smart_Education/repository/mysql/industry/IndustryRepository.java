@@ -11,7 +11,5 @@ public interface IndustryRepository extends JpaRepository<Industry, Long>{
 
     Optional<Industry> findByUserEmail(String industryEmail);
 
-    Optional<Internship> findByIdAndIndustryId(Long id, Long industryId);
-
 //    Optional<Industry> findByUser_Email(String industryEmail);
 }

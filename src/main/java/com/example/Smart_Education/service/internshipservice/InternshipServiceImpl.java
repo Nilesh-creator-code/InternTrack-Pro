@@ -55,12 +55,12 @@ public class InternshipServiceImpl implements InternshipService {
         @Override
         public void createInternship(InternshipCreateDTO dto, String email) {
 
-                if (dto.getEndDate().isAfter(dto.getStartDate())) {
-                        throw new RuntimeException("End date must be after start date");
+                if (dto.getEndDate().isBefore(dto.getStartDate())) {
+                        throw new IllegalArgumentException("Application end must be after start");
                 }
 
-                if (dto.getLastDateToApply().isAfter(dto.getStartDate())) {
-                        throw new RuntimeException("Last date to apply must be before start date");
+                if (dto.getLastDateToApply().isAfter(dto.getEndDate())) {
+                        throw new IllegalArgumentException("Last date must be before application end");
                 }
 
 

@@ -1,5 +1,6 @@
 package com.example.Smart_Education.DTOs.industryDtoPackage.internshipDTO;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.*;
 import lombok.Builder;
 import lombok.Data;
@@ -28,13 +29,16 @@ public class UpdateInternshipDTO {
     @NotBlank
     private String location;
 
-    @NotBlank
+    @NotNull
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate startDate;
 
-    @NotBlank
+    @NotNull
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate endDate;
 
-    @NotBlank
+    @NotNull
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate lastDateToApply;
 
     @NotBlank
