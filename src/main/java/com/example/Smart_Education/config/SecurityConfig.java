@@ -42,9 +42,11 @@ public class SecurityConfig {
 
                         // 🔐 Protected APIs
                         .requestMatchers("/api/student-controller/**").hasRole("STUDENT")
+                        .requestMatchers("/api/applications-controller/**").hasRole("STUDENT")
+                        .requestMatchers("/api/internships/student/**").hasRole("STUDENT")
                         .requestMatchers("/api/college-controller/**").hasRole("COLLEGE")
                         .requestMatchers("/api/industry-controller/**").hasRole("INDUSTRY")
-                        .requestMatchers("/api/industry/internships/**").hasRole("INDUSTRY")
+                        .requestMatchers("/api/internships/industry/**").hasRole("INDUSTRY")
 
                         .anyRequest().authenticated()
                 )
@@ -70,4 +72,5 @@ public class SecurityConfig {
             AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
+
 }

@@ -23,6 +23,7 @@ public class InternshipCreateDTO {
     private String title;
 
     @NotBlank
+    @Size(min = 3, max = 100, message = "Title must be between 3 and 100 characters")
     private String shortDescription;
 
     @NotBlank

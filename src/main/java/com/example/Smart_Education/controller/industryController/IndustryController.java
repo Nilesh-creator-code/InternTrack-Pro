@@ -35,10 +35,6 @@ public class IndustryController {
         return "Hello from Industry Controller";
     }
 
-    @GetMapping("/industry/applications")
-    public List<IndustryApplicationResponseDTO> getMyApplications() {
-        return internshipService.getApplicationsForMyIndustry();
-    }
 
 
     @GetMapping("/industry/student")

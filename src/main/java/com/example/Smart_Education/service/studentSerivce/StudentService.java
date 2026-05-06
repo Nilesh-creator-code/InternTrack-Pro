@@ -1,6 +1,6 @@
 package com.example.Smart_Education.service.studentSerivce;
 
-import com.example.Smart_Education.DTOs.studentDTO.StudentProfileDTO;
+import com.example.Smart_Education.DTOs.studentDtoPackage.studentDTO.StudentProfileDTO;
 import com.example.Smart_Education.entity.Role;
 import com.example.Smart_Education.entity.User;
 import com.example.Smart_Education.entity.student_entity.Student;
@@ -12,7 +12,6 @@ import com.example.Smart_Education.repository.mysql.UserRepository;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 @Service

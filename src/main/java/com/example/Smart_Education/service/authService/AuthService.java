@@ -4,7 +4,7 @@ import com.example.Smart_Education.DTOs.centralAuthDTO.AuthResponse;
 import com.example.Smart_Education.DTOs.centralAuthDTO.LoginRequest;
 import com.example.Smart_Education.DTOs.collegeDTO.CollegeRegisterDTO;
 import com.example.Smart_Education.DTOs.industryDtoPackage.industryDTO.IndustryRegisterDTO;
-import com.example.Smart_Education.DTOs.studentDTO.StudentRegistrationDTO;
+import com.example.Smart_Education.DTOs.studentDtoPackage.studentDTO.StudentRegistrationDTO;
 import com.example.Smart_Education.config.JwtService;
 import com.example.Smart_Education.entity.OTP.Otp;
 import com.example.Smart_Education.entity.Role;

@@ -35,16 +35,15 @@ public class Student {
     private User user;
 
 
-    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
-    private List<Enrollment> enrollments;
-
-    // @ManyToOne
-    // @JoinColumn(name = "intership_id")
-    // private Internship internship;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private EducationStatus educationStatus;
+
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
+    private List<Enrollment> enrollments;
+
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
+    private List<Application> applications;
 
 //    @ManyToOne
 //    @JoinColumn(name = "college_id",nullable = true)

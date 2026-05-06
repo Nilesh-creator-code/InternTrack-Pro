@@ -1,4 +1,4 @@
-package com.example.Smart_Education.DTOs.studentDTO;
+package com.example.Smart_Education.DTOs.studentDtoPackage.studentDTO;
 
 
 import com.example.Smart_Education.entity.student_entity.EducationStatus;

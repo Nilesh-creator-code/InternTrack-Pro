@@ -1,6 +1,6 @@
-package com.example.Smart_Education.DTOs.studentDTO;
+package com.example.Smart_Education.DTOs.studentDtoPackage.applicationdto.industryApplicationDto;
 
-import com.example.Smart_Education.entity.student_entity.Applicationstatus;
+import com.example.Smart_Education.entity.student_entity.ApplicationStatus;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -14,7 +14,7 @@ public class ApplicationResponseDTO {
 
     private Long id;
     private LocalDate applicationDate;
-    private Applicationstatus status;
+    private ApplicationStatus status;
 
     private String IndustryName;     // Name of the industry offering the internship
     private String InternshipTitle; // Title of the internship
@@ -24,7 +24,5 @@ public class ApplicationResponseDTO {
     private Long studentId;       // Reference student by ID
     private Long internshipId;    // Reference internship by ID
     private Long industryId;      // Reference industry by ID
-
-
 
 }

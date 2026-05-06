@@ -19,7 +19,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/api/industry/internships")
+@RequestMapping("/api/internships")
 @AllArgsConstructor
 public class InternshipController {
 
@@ -32,8 +32,8 @@ public class InternshipController {
         return "Hello from Internship Controller";
     }
 
-
-    @PostMapping("/create")
+    //Here is industry api
+    @PostMapping("/industry/create")
     public ResponseEntity<?> createInternship(
             @Valid @RequestBody InternshipCreateDTO dto,
             Authentication authentication
@@ -46,26 +46,8 @@ public class InternshipController {
         return ResponseEntity.ok("Internship created successfully");
     }
 
-    //For student
-    @GetMapping("/all")
-    public ResponseEntity<List<InternshipResposeDTO>> getAllInternship() {
-            return ResponseEntity.ok(internshipService.getAllInternships());
-    }
-
-    @GetMapping("/view/{id}")
-    public ResponseEntity<IndustryInternshipResponseDTO> getMethodName(@PathVariable Long id) {
-        IndustryInternshipResponseDTO internship = internshipService.getInternshipById(id);
-        return ResponseEntity.ok(internship);
-    }
-
-    @GetMapping("/domain/{domain}")
-    public ResponseEntity<List<InternshipResposeDTO>> getInternshipsByDomain(@PathVariable String domain) {
-        List<InternshipResposeDTO> internships = internshipService.getInternshipsByDomain(domain);
-        return ResponseEntity.ok(internships);
-    }
-    
     /* Update Internship by industry*/
-    @PutMapping("/update/{id}")
+    @PutMapping("/industry/update/{id}")
     public ResponseEntity<?> updateInternship(
             @PathVariable Long id,
             @Valid @RequestBody UpdateInternshipDTO dto) {
@@ -76,7 +58,7 @@ public class InternshipController {
     }
 
     /* Delete internship */
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/industry/delete/{id}")
     public ResponseEntity<?> deleteInternship(@PathVariable Long id, Authentication authentication) {
 
         String email = authentication.getName();
@@ -86,9 +68,44 @@ public class InternshipController {
         return ResponseEntity.ok("Internship deleted successfully");
     }
 
+    /* Get all internships posted by a specific industry */
+    @GetMapping("/industry/my-internships")
+    public ResponseEntity<List<InternshipResposeDTO>> getMyInternships(Authentication authentication) {
+
+        CustomUserDetails userDetails =
+                (CustomUserDetails) authentication.getPrincipal();
+
+        String email = userDetails.getUsername(); // Assuming username is the email
+        List<InternshipResposeDTO> internships = internshipService.getMyInternships(email);
+        return ResponseEntity.ok(internships);
+    }
+
+
+
+    /*Here is student api*/
+
+    //For student to get all internship
+    @GetMapping("/student/all")
+    public ResponseEntity<List<InternshipResposeDTO>> getAllInternship() {
+            return ResponseEntity.ok(internshipService.getAllInternships());
+    }
+
+    //For the student to see particular internship detail
+    @GetMapping("/student/view/{id}")
+    public ResponseEntity<IndustryInternshipResponseDTO> getInternshipById(@PathVariable Long id) {
+        IndustryInternshipResponseDTO internship = internshipService.getInternshipById(id);
+        return ResponseEntity.ok(internship);
+    }
+
+    @GetMapping("/student/domain/{domain}")
+    public ResponseEntity<List<InternshipResposeDTO>> getInternshipsByDomain(@PathVariable String domain) {
+        List<InternshipResposeDTO> internships = internshipService.getInternshipsByDomain(domain);
+        return ResponseEntity.ok(internships);
+    }
+
 
     //This is for student to get all internships in the pagination
-    @GetMapping("/all/pagination")
+    @GetMapping("/student/all/pagination")
     public ResponseEntity<List<InternshipResposeDTO>> getAllInternshipsByPage(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
@@ -98,18 +115,6 @@ public class InternshipController {
         return ResponseEntity
                 .status(200)
                 .body(response);
-    }
-
-    /* Get all internships posted by a specific industry */
-    @GetMapping("/my-internships")
-    public ResponseEntity<List<InternshipResposeDTO>> getMyInternships(Authentication authentication) {
-
-        CustomUserDetails userDetails =
-        (CustomUserDetails) authentication.getPrincipal();
-
-        String email = userDetails.getUsername(); // Assuming username is the email
-        List<InternshipResposeDTO> internships = internshipService.getMyInternships(email);
-        return ResponseEntity.ok(internships);
     }
 
 
