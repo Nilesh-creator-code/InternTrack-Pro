@@ -42,7 +42,7 @@ public class SecurityConfig {
 
                         // 🔐 Protected APIs
                         .requestMatchers("/api/student-controller/**").hasRole("STUDENT")
-                        .requestMatchers("/api/applications-controller/**").hasRole("STUDENT")
+                        .requestMatchers("/api/applications-controller/student/**").hasRole("STUDENT")
                         .requestMatchers("/api/internships/student/**").hasRole("STUDENT")
                         .requestMatchers("/api/college-controller/**").hasRole("COLLEGE")
                         .requestMatchers("/api/industry-controller/**").hasRole("INDUSTRY")

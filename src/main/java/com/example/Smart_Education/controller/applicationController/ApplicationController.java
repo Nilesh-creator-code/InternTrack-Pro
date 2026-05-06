@@ -5,8 +5,6 @@ import com.example.Smart_Education.DTOs.studentDtoPackage.studentDTO.Application
 import com.example.Smart_Education.service.applicationService.ApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,11 +16,13 @@ public class ApplicationController {
     @Autowired
     private ApplicationService applicationService;
 
+    //This is student api
     /* apply for internship */
-    @PostMapping("/apply")
+    @PostMapping("/student/apply")
     public ResponseEntity<?> apply(@ModelAttribute ApplicationDTO dto) {
         return ResponseEntity.ok(applicationService.applyForInternship(dto));
     }
+
 
 //    /* get student's applications where they have applied */
 //    @GetMapping("/applications")

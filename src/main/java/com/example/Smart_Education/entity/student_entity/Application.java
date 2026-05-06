@@ -36,7 +36,8 @@ public class Application {
     @JoinColumn(name = "internship_id")
     private Internship internship;
 
-    private LocalDate applicationDate = LocalDate.now();
+    @Column(name = "application_date")
+    private LocalDate applicationDate;
 
     @NotBlank
     private String location;

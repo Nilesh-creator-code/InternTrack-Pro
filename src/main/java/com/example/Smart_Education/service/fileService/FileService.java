@@ -19,7 +19,7 @@ public class FileService {
         try {
             File dir = new File(uploadDir);
             if (!dir.exists()) dir.mkdirs();
-            if (!file.getContentType().equals("application/pdf")) {
+            if (file.getContentType() == null || !file.getContentType().equals("application/pdf")) {
                 throw new RuntimeException("Only PDF files are allowed");
             }
 
@@ -34,5 +34,6 @@ public class FileService {
             throw new RuntimeException("File upload failed");
         }
     }
+
 }
 
