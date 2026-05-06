@@ -105,6 +105,8 @@ public class ApplicationService {
         // 3. Get applications
         List<Application> applications = applicationRepository.findByStudentId(student.getId());
 
+
+
         // 4. Map to DTO
         return applications.stream()
                 .map(application -> {
@@ -113,6 +115,8 @@ public class ApplicationService {
 
                     return StudentApplicationViewDTO.builder()
                             .internshipTitle(internship.getTitle())
+                            .domain(internship.getDomain())
+                            .location(internship.getLocation())
                             .industryName(industry.getName())
                             .status(application.getStatus().name())
                             .applicationDate(application.getApplicationDate())
@@ -120,6 +124,7 @@ public class ApplicationService {
                 })
                 .toList();
     }
+
 
     /* For the industry to get that student's applications who have applied */
     public List<IndustryApplicationResponseDTO> getApplicationsForMyIndustry() {
