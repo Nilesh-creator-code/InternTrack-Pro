@@ -1,6 +1,6 @@
 package com.example.Smart_Education.service.studentSerivce;
 
-import com.example.Smart_Education.DTOs.studentDtoPackage.studentDTO.StudentProfileDTO;
+import com.example.Smart_Education.DTOs.studentDtoPackage.StudentProfileDTO;
 import com.example.Smart_Education.entity.Role;
 import com.example.Smart_Education.entity.User;
 import com.example.Smart_Education.entity.student_entity.Student;

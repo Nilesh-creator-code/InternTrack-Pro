@@ -23,5 +23,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
     //For the student to get there internship where they have applied
     List<Application> findByStudent(Student student);
 
+    List<Application> findByInternshipIndustryId(Long industryId);
+
 
 }

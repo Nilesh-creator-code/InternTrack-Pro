@@ -1,4 +1,4 @@
-package com.example.Smart_Education.DTOs.studentDtoPackage.studentDTO;
+package com.example.Smart_Education.DTOs.applicationDto;
 
 import java.time.LocalDate;
 

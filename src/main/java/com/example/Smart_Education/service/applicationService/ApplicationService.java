@@ -1,8 +1,9 @@
 package com.example.Smart_Education.service.applicationService;
 
+import com.example.Smart_Education.DTOs.applicationDto.IndustryApplicationViewDTO;
 import com.example.Smart_Education.DTOs.industryDtoPackage.industryDTO.IndustryApplicationResponseDTO;
-import com.example.Smart_Education.DTOs.studentDtoPackage.studentDTO.ApplicationDTO;
-import com.example.Smart_Education.DTOs.studentDtoPackage.studentDTO.StudentApplicationViewDTO;
+import com.example.Smart_Education.DTOs.applicationDto.ApplicationDTO;
+import com.example.Smart_Education.DTOs.applicationDto.StudentApplicationViewDTO;
 import com.example.Smart_Education.entity.industry_entity.Industry;
 import com.example.Smart_Education.entity.industry_entity.Internship;
 import com.example.Smart_Education.entity.industry_entity.InternshipStatus;
@@ -127,74 +128,86 @@ public class ApplicationService {
 
 
     /* For the industry to get that student's applications who have applied */
-    public List<IndustryApplicationResponseDTO> getApplicationsForMyIndustry() {
+    public List<IndustryApplicationViewDTO> getInternshipApplication(Long internshipId) {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
+        // 1. Get logged-in user (JWT)
+        String email = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
 
+        // 2. Find industry by email
         Industry industry = industryRepository.findByUserEmail(email)
                 .orElseThrow(() -> new RuntimeException("Industry not found"));
 
-        List<Application> applications = applicationRepository.findByInternship_Industry_Id(industry.getId());
+        // 3. Find internship by id and industry
 
-        return applications.stream().map(app -> {
-            IndustryApplicationResponseDTO dto = new IndustryApplicationResponseDTO();
+        Internship internship = internshipRepository.findByIdAndIndustry(internshipId, industry)
+                .orElseThrow(() -> new RuntimeException("Internship not found for this industry"));
 
-            // Application info
-            dto.setApplicationId(app.getId());
-            dto.setApplicationDate(app.getApplicationDate());
-            dto.setStatus(app.getStatus().name());
+        System.out.println("Internship ID: " + internshipId);
+        System.out.println("Logged user email: " + email);
+        System.out.println("Industry: " + industry);
+        System.out.println("Internship: " + internship);
 
-            // Student info
-            dto.setStudentId(app.getStudent().getId());
-            dto.setStudentName(app.getStudent().getName());
-            dto.setStudentEmail(app.getStudent().getUser().getEmail());
 
-            // Internship info
-            dto.setInternshipId(app.getInternship().getId());
-            dto.setInternshipTitle(app.getInternship().getTitle());
+        // 4. Get applications for the internship
+        List<Application> applications = applicationRepository.findByInternshipId(internship.getId());
+        System.out.println("Applications: " + applications);
 
-            return dto;
-        }).toList();
+        // 5. Map to DTO
+        return applications.stream()
+                .map(application -> {
+                    Student student = application.getStudent();
+                    return IndustryApplicationViewDTO.builder()
+                            .studentName(student.getName())
+                            .studentEmail(student.getUser().getEmail())
+                            .department(student.getDepartment())
+                            .collegeName(student.getCollegeName())
+                            .educationStatus(String.valueOf(student.getEducationStatus()))
+                            .applicationId(application.getId())
+                            .location(application.getLocation())
+                            .resumeLink(application.getResumeLink()) // Assuming you want to include the resume file in the DTO
+                            .githubLink(application.getGithubLink())
+                            .linkedinLink(application.getLinkedinLink())
+                            .build();
+                })
+                .toList();
+
     }
 
 
-    /* get Student application where they have applied for internship of that industry - for industry dashboard
-//     */
-//    public List<ApplicationResponseDTO> getApplicationsForMyInternship(String email) {
-//
-////                Industry industry = industryRepository.findByUserEmail(email)
-////                                .orElseThrow(() -> new RuntimeException("Industry not found"));
-//
-////                List<Application> applications = applicationRepository.findByInternship_Industry_Id(industry.getId());
-//
-//        Student student = studentRepository.findByUser_Email(email)
-//                .orElseThrow(() -> new RuntimeException("Student not found"));
-//
-//        List<Application> applications = applicationRepository.findByStudentId(student.getId());
-//
-//
-//        return applications.stream().map(app -> {
-//            ApplicationResponseDTO dto = new ApplicationResponseDTO();
-//
-//            // Application info
-//            dto.setId(app.getId());
-//            dto.setApplicationDate(app.getApplicationDate());
-//            dto.setStatus(app.getStatus());
-//
-//            dto.setInternshipTitle(app.getInternship().getTitle());
-//            dto.setInternshipDomain(app.getInternship().getDomain());
-//            dto.setInternshipDescription(app.getInternship().getShortDescription());
-//
-//            // Student info
-//            dto.setStudentId(app.getStudent().getId());
-//
-//            // Internship info
-//            dto.setInternshipId(app.getInternship().getId());
-//
-//            return dto;
-//        }).toList();
-//    }
 
+    /* Now the industry can view applications for their internships and approve or reject them */
+    public ApplicationStatus updateApplicationStatus(Long applicationId, ApplicationStatus newStatus) {
+
+        // 1. Get logged-in user (JWT)
+        String email = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
+        // 2. Find industry by email
+        Industry industry = industryRepository.findByUserEmail(email)
+                .orElseThrow(() -> new RuntimeException("Industry not found"));
+
+        // 3. Find application by id
+        Application application = applicationRepository.findById(applicationId)
+                .orElseThrow(() -> new RuntimeException("Application not found"));
+                
+        // Get internship from application
+        Internship internship = application.getInternship();
+
+        //4. Validate industry belong to that internship
+        if(!internship.getIndustry().getId().equals(industry.getId())) {
+            throw new RuntimeException("You are not authorized to update applications for this internship");
+        }
+
+        // 6. Update status
+        application.setStatus(newStatus);
+        applicationRepository.save(application);
+        return application.getStatus();
+             
+    }
+
+    
 
 }

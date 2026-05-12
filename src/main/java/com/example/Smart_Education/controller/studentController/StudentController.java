@@ -1,8 +1,6 @@
 package com.example.Smart_Education.controller.studentController;
 
-import com.example.Smart_Education.DTOs.industryDtoPackage.internshipDTO.IndustryInternshipResponseDTO;
-import com.example.Smart_Education.DTOs.industryDtoPackage.internshipDTO.InternshipResposeDTO;
-import com.example.Smart_Education.DTOs.studentDtoPackage.studentDTO.StudentProfileDTO;
+import com.example.Smart_Education.DTOs.studentDtoPackage.StudentProfileDTO;
 import com.example.Smart_Education.config.CustomUserDetails;
 import com.example.Smart_Education.entity.student_entity.Student;
 import com.example.Smart_Education.service.internshipservice.InternshipServiceImpl;

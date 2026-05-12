@@ -1,8 +1,8 @@
 package com.example.Smart_Education.controller.applicationController;
 
-import com.example.Smart_Education.DTOs.industryDtoPackage.industryDTO.IndustryApplicationResponseDTO;
-import com.example.Smart_Education.DTOs.studentDtoPackage.studentDTO.ApplicationDTO;
-import com.example.Smart_Education.DTOs.studentDtoPackage.studentDTO.StudentApplicationViewDTO;
+import com.example.Smart_Education.DTOs.applicationDto.ApplicationDTO;
+import com.example.Smart_Education.DTOs.applicationDto.IndustryApplicationViewDTO;
+import com.example.Smart_Education.DTOs.applicationDto.StudentApplicationViewDTO;
 import com.example.Smart_Education.service.applicationService.ApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +22,7 @@ public class ApplicationController {
         return "This hello is from student application api";
     }
 
-    //This is student api
+
     /* apply for internship */
     @PostMapping("/student/apply")
     public ResponseEntity<?> apply(@ModelAttribute ApplicationDTO dto) {
@@ -36,11 +36,18 @@ public class ApplicationController {
     }
 
 
+    //This is student api
+    @GetMapping("/industry/hello")
+    public String hello() {
+        return "This hello is from industry application api";
+    }
 
     //For the industry
-    @GetMapping("/industry/applications")
-    public List<IndustryApplicationResponseDTO> getMyApplications() {
-        return applicationService.getApplicationsForMyIndustry();
+    @GetMapping("/industry/applications/{id}")
+    public ResponseEntity<List<IndustryApplicationViewDTO>> getApplicationsForIndustry(@PathVariable Long internshipId) {
+        return ResponseEntity.ok(applicationService.getInternshipApplication(internshipId));
     }
+
+    
 
 }

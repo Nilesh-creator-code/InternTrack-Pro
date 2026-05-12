@@ -47,6 +47,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/college-controller/**").hasRole("COLLEGE")
                         .requestMatchers("/api/industry-controller/**").hasRole("INDUSTRY")
                         .requestMatchers("/api/internships/industry/**").hasRole("INDUSTRY")
+                        .requestMatchers("/api/applications-controller/industry/**").hasRole("INDUSTRY")
 
                         .anyRequest().authenticated()
                 )

@@ -1,4 +1,4 @@
-package com.example.Smart_Education.DTOs.studentDtoPackage.studentDTO;
+package com.example.Smart_Education.DTOs.applicationDto;
 
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -27,4 +27,5 @@ public class ApplicationDTO {
 
     @NotNull(message = "Internship ID is required")
     private Long internshipId;
+
 }

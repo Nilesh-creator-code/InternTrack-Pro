@@ -1,11 +1,13 @@
 package com.example.Smart_Education.repository.mysql.industry;
 
+import com.example.Smart_Education.entity.industry_entity.Industry;
 import com.example.Smart_Education.entity.industry_entity.Internship;
 import com.example.Smart_Education.entity.industry_entity.InternshipStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.lang.ScopedValue;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,6 +23,8 @@ public interface InternshipRepository extends JpaRepository<Internship, Long> {
 
 
     Page<Internship> findAll(Pageable pageable);
-    
+
+
+    Optional<Internship> findByIdAndIndustry(Long internshipId, Industry industry);
 
 }

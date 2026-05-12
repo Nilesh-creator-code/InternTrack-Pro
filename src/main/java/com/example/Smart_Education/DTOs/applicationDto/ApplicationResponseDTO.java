@@ -1,4 +1,4 @@
-package com.example.Smart_Education.DTOs.studentDtoPackage.applicationdto.industryApplicationDto;
+package com.example.Smart_Education.DTOs.applicationDto;
 
 import com.example.Smart_Education.entity.student_entity.ApplicationStatus;
 import lombok.*;
