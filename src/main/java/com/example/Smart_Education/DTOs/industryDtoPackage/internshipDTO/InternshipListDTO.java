@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @Builder
-public class InternshipResposeDTO {
+public class InternshipListDTO {
 
     private Long id;
     private String title;

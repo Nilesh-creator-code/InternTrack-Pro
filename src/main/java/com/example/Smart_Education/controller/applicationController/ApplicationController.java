@@ -3,12 +3,17 @@ package com.example.Smart_Education.controller.applicationController;
 import com.example.Smart_Education.DTOs.applicationDto.ApplicationDTO;
 import com.example.Smart_Education.DTOs.applicationDto.IndustryApplicationViewDTO;
 import com.example.Smart_Education.DTOs.applicationDto.StudentApplicationViewDTO;
+import com.example.Smart_Education.entity.student_entity.ApplicationStatus;
 import com.example.Smart_Education.service.applicationService.ApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
+
 
 @RestController
 @RequestMapping("/api/applications-controller")
@@ -43,11 +48,14 @@ public class ApplicationController {
     }
 
     //For the industry
-    @GetMapping("/industry/applications/{id}")
+    @GetMapping("/industry/applications/{internshipId}")
     public ResponseEntity<List<IndustryApplicationViewDTO>> getApplicationsForIndustry(@PathVariable Long internshipId) {
         return ResponseEntity.ok(applicationService.getInternshipApplication(internshipId));
     }
-
     
+    @PutMapping("/industry/updateApplication/{applicationId}")
+    public ApplicationStatus updateApplicationStatus(@PathVariable Long applicationId, @RequestBody ApplicationStatus newStatus) {
+        return applicationService.updateApplicationStatus(applicationId, newStatus);
+    }
 
-}
+}   

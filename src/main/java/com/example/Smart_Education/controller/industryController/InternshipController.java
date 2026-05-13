@@ -1,9 +1,9 @@
 package com.example.Smart_Education.controller.industryController;
 
 
-import com.example.Smart_Education.DTOs.industryDtoPackage.internshipDTO.IndustryInternshipResponseDTO;
+import com.example.Smart_Education.DTOs.industryDtoPackage.internshipDTO.InternshipDetailDTO;
 import com.example.Smart_Education.DTOs.industryDtoPackage.internshipDTO.InternshipCreateDTO;
-import com.example.Smart_Education.DTOs.industryDtoPackage.internshipDTO.InternshipResposeDTO;
+import com.example.Smart_Education.DTOs.industryDtoPackage.internshipDTO.InternshipListDTO;
 import com.example.Smart_Education.DTOs.industryDtoPackage.internshipDTO.UpdateInternshipDTO;
 import com.example.Smart_Education.config.CustomUserDetails;
 import com.example.Smart_Education.service.authService.AuthService;
@@ -70,47 +70,54 @@ public class InternshipController {
 
     /* Get all internships posted by a specific industry */
     @GetMapping("/industry/my-internships")
-    public ResponseEntity<List<InternshipResposeDTO>> getMyInternships(Authentication authentication) {
+    public ResponseEntity<List<InternshipListDTO>> getMyInternships(Authentication authentication) {
 
         CustomUserDetails userDetails =
                 (CustomUserDetails) authentication.getPrincipal();
 
         String email = userDetails.getUsername(); // Assuming username is the email
-        List<InternshipResposeDTO> internships = internshipService.getMyInternships(email);
+        List<InternshipListDTO> internships = internshipService.getMyInternships(email);
         return ResponseEntity.ok(internships);
+    }
+
+    @GetMapping("/industry/view/{id}")
+    public ResponseEntity<InternshipDetailDTO> getInternshipDetailById(@PathVariable Long id) {
+        InternshipDetailDTO internship = internshipService.getInternshipDetailById(id);
+        return ResponseEntity.ok(internship);
     }
 
 
 
-    /*Here is student api*/
 
+
+    /*Here is student api*/
     //For student to get all internship
     @GetMapping("/student/all")
-    public ResponseEntity<List<InternshipResposeDTO>> getAllInternship() {
+    public ResponseEntity<List<InternshipListDTO>> getAllInternship() {
             return ResponseEntity.ok(internshipService.getAllInternships());
     }
 
     //For the student to see particular internship detail
     @GetMapping("/student/view/{id}")
-    public ResponseEntity<IndustryInternshipResponseDTO> getInternshipById(@PathVariable Long id) {
-        IndustryInternshipResponseDTO internship = internshipService.getInternshipById(id);
+    public ResponseEntity<InternshipDetailDTO> getInternshipById(@PathVariable Long id) {
+        InternshipDetailDTO internship = internshipService.getInternshipById(id);
         return ResponseEntity.ok(internship);
     }
 
     @GetMapping("/student/domain/{domain}")
-    public ResponseEntity<List<InternshipResposeDTO>> getInternshipsByDomain(@PathVariable String domain) {
-        List<InternshipResposeDTO> internships = internshipService.getInternshipsByDomain(domain);
+    public ResponseEntity<List<InternshipListDTO>> getInternshipsByDomain(@PathVariable String domain) {
+        List<InternshipListDTO> internships = internshipService.getInternshipsByDomain(domain);
         return ResponseEntity.ok(internships);
     }
 
 
     //This is for student to get all internships in the pagination
     @GetMapping("/student/all/pagination")
-    public ResponseEntity<List<InternshipResposeDTO>> getAllInternshipsByPage(
+    public ResponseEntity<List<InternshipListDTO>> getAllInternshipsByPage(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        List<InternshipResposeDTO> response = internshipService.getAllInternshipsByPage(page, size).getContent();
+        List<InternshipListDTO> response = internshipService.getAllInternshipsByPage(page, size).getContent();
 
         return ResponseEntity
                 .status(200)

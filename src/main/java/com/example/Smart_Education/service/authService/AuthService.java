@@ -134,7 +134,7 @@ public class AuthService {
                     .department(dto.getDepartment())
                     .educationStatus(dto.getEducationStatus())
                     .user(user)
-                    .CollegeName(dto.getCollegeName())
+                    .collegeName(dto.getCollegeName())
                     .build();
 
             System.out.println("Contact Number: " + dto.getContactNumber());

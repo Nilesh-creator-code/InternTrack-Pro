@@ -1,8 +1,8 @@
 package com.example.Smart_Education.service.internshipservice;
 
-import com.example.Smart_Education.DTOs.industryDtoPackage.internshipDTO.IndustryInternshipResponseDTO;
+import com.example.Smart_Education.DTOs.industryDtoPackage.internshipDTO.InternshipDetailDTO;
 import com.example.Smart_Education.DTOs.industryDtoPackage.internshipDTO.InternshipCreateDTO;
-import com.example.Smart_Education.DTOs.industryDtoPackage.internshipDTO.InternshipResposeDTO;
+import com.example.Smart_Education.DTOs.industryDtoPackage.internshipDTO.InternshipListDTO;
 import com.example.Smart_Education.DTOs.industryDtoPackage.internshipDTO.UpdateInternshipDTO;
 import com.example.Smart_Education.entity.industry_entity.Industry;
 import com.example.Smart_Education.entity.industry_entity.Internship;
@@ -93,7 +93,7 @@ public class InternshipServiceImpl implements InternshipService {
 
         @Transactional
         @Override
-        public IndustryInternshipResponseDTO updateInternship(Long id, UpdateInternshipDTO dto) {
+        public InternshipDetailDTO updateInternship(Long id, UpdateInternshipDTO dto) {
 
                 // 🔐 Get logged-in user
                 String email = SecurityContextHolder.getContext()
@@ -134,7 +134,7 @@ public class InternshipServiceImpl implements InternshipService {
                 detailsRepository.save(details);
 
                 // ===== Return Response =====
-                return IndustryInternshipResponseDTO.builder()
+                return InternshipDetailDTO.builder()
                         .id(internship.getId())
                         .title(internship.getTitle())
                         .shortDescription(internship.getShortDescription())
@@ -152,10 +152,110 @@ public class InternshipServiceImpl implements InternshipService {
                         .build();
         }
 
-
+        /* Delete internship */
         @Transactional
         @Override
-        public List<InternshipResposeDTO> getAllInternships() {
+        public String deleteInternship(Long id, String email) {
+
+                Industry industry = industryRepository
+                        .findByUserEmail(email)
+                        .orElseThrow(() -> new RuntimeException("Industry not found"));
+
+                Internship internship = internshipRepository.findById(id)
+                        .orElseThrow(() -> new RuntimeException("Internship not found"));
+
+                // Ownership check
+                if (!internship.getIndustry().getId().equals(industry.getId())) {
+                        throw new RuntimeException("You are not authorized to delete this internship");
+                }
+
+                // delete MongoDB details
+                detailsRepository.deleteByInternshipId(id);
+
+                // delete SQL record
+                internshipRepository.deleteById(id);
+
+                return "Internship deleted successfully";
+        }
+
+        //Get all internship
+        @Override
+        public List<InternshipListDTO> getMyInternships(String email) {
+                Industry industry = industryRepository.findByUserEmail(email)
+                        .orElseThrow(() -> new RuntimeException("Industry not found"));
+                List<Internship> internships = internshipRepository.findByIndustryId(industry.getId());
+
+                if (internships.isEmpty()) {
+                        throw new ResourceNotFoundException("No internships found for this industry");
+                }
+
+                return internships.stream()
+                        .map(internship -> InternshipListDTO.builder()
+                                .id(internship.getId())
+                                .title(internship.getTitle())
+                                .shortDescription(internship.getShortDescription())
+                                .domain(internship.getDomain())
+                                .stipend(internship.getStipend())
+                                .location(internship.getLocation())
+                                .startDate(internship.getStartDate())
+                                .endDate(internship.getEndDate())
+                                .lastDateToApply(internship.getLastDateToApply())
+                                .type(internship.getType())
+                                .build())
+                        .toList();
+        }
+
+
+        /* Get internship detail by ID for the industry */
+        @Override
+        public InternshipDetailDTO getInternshipDetailById(Long id) {
+
+                String email = SecurityContextHolder.getContext()
+                        .getAuthentication()
+                        .getName();
+
+                Industry industry = industryRepository
+                        .findByUserEmail(email)
+                        .orElseThrow(() -> new RuntimeException("Industry not found"));
+
+                Internship internship = internshipRepository.findById(id)
+                        .orElseThrow(() -> new RuntimeException("Internship not found"));
+
+                if (!internship.getIndustry().getId().equals(industry.getId())) {
+                        throw new RuntimeException("You are not authorized to view this internship");
+                }
+
+
+                InternshipDetails details = detailsRepository.findByInternshipId(internship.getId())
+                        .orElseThrow(() -> new RuntimeException("Internship details not found"));
+
+                return InternshipDetailDTO.builder()
+                        .id(internship.getId())
+                        .title(internship.getTitle())
+                        .shortDescription(internship.getShortDescription())
+                        .domain(internship.getDomain())
+                        .stipend(internship.getStipend())
+                        .location(internship.getLocation())
+                        .startDate(internship.getStartDate())
+                        .endDate(internship.getEndDate())
+                        .lastDateToApply(internship.getLastDateToApply())
+                        .type(internship.getType())
+
+                        /* MongoDB data */
+                        .fullDescription(details.getFullDescription())
+                        .skillRequired(details.getSkillsRequired())
+                        .responsibilities(details.getResponsibilities())
+                        .build();
+        }
+
+
+
+
+        //Student functionalities
+        //This is for student to get all internship
+        @Transactional
+        @Override
+        public List<InternshipListDTO> getAllInternships() {
 
                 List<Internship> internships = internshipRepository.findAll();
 
@@ -164,7 +264,7 @@ public class InternshipServiceImpl implements InternshipService {
                 }
 
                 return internships.stream()
-                                .map(internship -> InternshipResposeDTO.builder()
+                                .map(internship -> InternshipListDTO.builder()
                                                 .id(internship.getId())
                                                 .title(internship.getTitle())
                                                 .shortDescription(internship.getShortDescription())
@@ -183,7 +283,7 @@ public class InternshipServiceImpl implements InternshipService {
         /* Get internship detail by ID for the student */
         @Transactional
         @Override
-        public IndustryInternshipResponseDTO getInternshipById(Long id) {
+        public InternshipDetailDTO getInternshipById(Long id) {
 
                 String email = SecurityContextHolder.getContext()
                                 .getAuthentication()
@@ -204,7 +304,7 @@ public class InternshipServiceImpl implements InternshipService {
                                 .orElseThrow(() -> new RuntimeException("Internship details not found"));
 
 
-                return IndustryInternshipResponseDTO.builder()
+                return InternshipDetailDTO.builder()
                                 .id(internship.getId())
                                 .title(internship.getTitle())
                                 .shortDescription(internship.getShortDescription())
@@ -226,10 +326,10 @@ public class InternshipServiceImpl implements InternshipService {
         /* Get internship by domain */
         @Transactional
         @Override
-        public List<InternshipResposeDTO> getInternshipsByDomain(String domain) {
+        public List<InternshipListDTO> getInternshipsByDomain(String domain) {
                 List<Internship> internships = internshipRepository.findByDomainIgnoreCase(domain);
                 return internships.stream()
-                                .map(internship -> InternshipResposeDTO.builder()
+                                .map(internship -> InternshipListDTO.builder()
                                                 .id(internship.getId())
                                                 .title(internship.getTitle())
                                                 .shortDescription(internship.getShortDescription())
@@ -244,65 +344,15 @@ public class InternshipServiceImpl implements InternshipService {
                                 .toList();
         }
 
-        /* Delete internship */
-        @Transactional
-        @Override
-        public String deleteInternship(Long id, String email) {
 
-                Industry industry = industryRepository
-                                .findByUserEmail(email)
-                                .orElseThrow(() -> new RuntimeException("Industry not found"));
 
-                Internship internship = internshipRepository.findById(id)
-                                .orElseThrow(() -> new RuntimeException("Internship not found"));
-
-                // Ownership check
-                if (!internship.getIndustry().getId().equals(industry.getId())) {
-                        throw new RuntimeException("You are not authorized to delete this internship");
-                }
-
-                // delete MongoDB details
-                detailsRepository.deleteByInternshipId(id);
-
-                // delete SQL record
-                internshipRepository.deleteById(id);
-
-                return "Internship deleted successfully";
-        }
-
-        @Override
-        public List<InternshipResposeDTO> getMyInternships(String email) {
-                Industry industry = industryRepository.findByUserEmail(email)
-                        .orElseThrow(() -> new RuntimeException("Industry not found"));
-                List<Internship> internships = internshipRepository.findByIndustryId(industry.getId());
-
-                if (internships.isEmpty()) {
-                        throw new ResourceNotFoundException("No internships found for this industry");
-                }
-
-                return internships.stream()
-                        .map(internship -> InternshipResposeDTO.builder()
-                                .id(internship.getId())
-                                .title(internship.getTitle())
-                                .shortDescription(internship.getShortDescription())
-                                .domain(internship.getDomain())
-                                .stipend(internship.getStipend())
-                                .location(internship.getLocation())
-                                .startDate(internship.getStartDate())
-                                .endDate(internship.getEndDate())
-                                .lastDateToApply(internship.getLastDateToApply())
-                                .type(internship.getType())
-                                .build())
-                        .toList();
-        }
-
-        public Page<InternshipResposeDTO> getAllInternshipsByPage(int page, int size) {
+        public Page<InternshipListDTO> getAllInternshipsByPage(int page, int size) {
 
                 Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
 
                 Page<Internship> internshipPage = internshipRepository.findAll(pageable);
 
-                return internshipPage.map(internship -> InternshipResposeDTO.builder()
+                return internshipPage.map(internship -> InternshipListDTO.builder()
                         .id(internship.getId())
                         .title(internship.getTitle())
                         .shortDescription(internship.getShortDescription())
