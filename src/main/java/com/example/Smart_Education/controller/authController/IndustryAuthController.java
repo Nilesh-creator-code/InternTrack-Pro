@@ -30,8 +30,8 @@ public class IndustryAuthController {
     @PostMapping("/send-otp")
     public ResponseEntity<?> sendOtp(@RequestParam String email) {
 
+        System.out.println("Email : " +  email);
         String response = authService.sendRegistrationOtp(email);
-
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(response);

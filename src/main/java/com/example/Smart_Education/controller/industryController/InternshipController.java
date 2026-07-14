@@ -7,7 +7,7 @@ import com.example.Smart_Education.DTOs.industryDtoPackage.internshipDTO.Interns
 import com.example.Smart_Education.DTOs.industryDtoPackage.internshipDTO.UpdateInternshipDTO;
 import com.example.Smart_Education.config.CustomUserDetails;
 import com.example.Smart_Education.service.authService.AuthService;
-import com.example.Smart_Education.service.internshipservice.InternshipServiceImpl;
+import com.example.Smart_Education.service.industryService.internshipservice.InternshipServiceImpl;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
@@ -87,6 +87,7 @@ public class InternshipController {
     }
 
 
+    
 
 
 

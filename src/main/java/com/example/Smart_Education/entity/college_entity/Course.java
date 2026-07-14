@@ -1,9 +1,8 @@
-package com.example.Smart_Education.entity;
+package com.example.Smart_Education.entity.college_entity;
 
 import com.example.Smart_Education.entity.student_entity.Enrollment;
 import jakarta.persistence.*;
 
-import com.example.Smart_Education.entity.college_entity.College;
 import com.example.Smart_Education.entity.industry_entity.Industry;
 
 import lombok.AllArgsConstructor;
@@ -35,12 +34,14 @@ public class Course {
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     private List<Enrollment> enrollments;
 
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "college_id")
-    private College college;
+    @JoinColumn(name = "department_id")
+    private Department department;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "industry_id")
     private Industry industry;
+    
     
 }

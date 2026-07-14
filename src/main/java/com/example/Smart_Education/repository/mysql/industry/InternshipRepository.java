@@ -20,9 +20,7 @@ public interface InternshipRepository extends JpaRepository<Internship, Long> {
 
     Optional<Internship> findByIdAndIndustryId(Long id, Long industryId);
 
-
     Page<Internship> findAll(Pageable pageable);
-
 
     Optional<Internship> findByIdAndIndustry(Long internshipId, Industry industry);
 

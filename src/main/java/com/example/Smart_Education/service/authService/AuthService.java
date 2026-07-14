@@ -63,16 +63,20 @@ public class AuthService {
     public AuthResponse login(LoginRequest request) {
 
         // 1️⃣ Authenticate user (email + password)
+        System.out.println("Bofore");
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
                         request.getPassword()
                 )
         );
+        System.out.println("After auntheticate");
 
         // 2️⃣ Fetch user from DB
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
+        System.out.println("userid " + user.getId() + "userRole " + user.getRole());
+        System.out.println("userPassword " + user.getPassword());
 
         // 3️⃣ Load Spring Security UserDetails
         UserDetails userDetails =

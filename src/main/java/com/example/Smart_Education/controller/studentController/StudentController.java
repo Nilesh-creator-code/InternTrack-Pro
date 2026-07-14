@@ -3,7 +3,7 @@ package com.example.Smart_Education.controller.studentController;
 import com.example.Smart_Education.DTOs.studentDtoPackage.StudentProfileDTO;
 import com.example.Smart_Education.config.CustomUserDetails;
 import com.example.Smart_Education.entity.student_entity.Student;
-import com.example.Smart_Education.service.internshipservice.InternshipServiceImpl;
+import com.example.Smart_Education.service.industryService.internshipservice.InternshipServiceImpl;
 import com.example.Smart_Education.service.studentSerivce.StudentService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +20,11 @@ public class StudentController {
     private final StudentService studentService;
 
     private final InternshipServiceImpl internshipService;
+
+    @GetMapping("/hello")
+    public String hello() {
+        return "Student Controller Api is Working Properly";
+    }
 
     public StudentController(StudentService studentService, InternshipServiceImpl internshipService) {
         this.studentService = studentService;

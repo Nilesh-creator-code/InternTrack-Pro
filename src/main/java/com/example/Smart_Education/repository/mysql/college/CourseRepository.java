@@ -1,6 +1,6 @@
-package com.example.Smart_Education.repository.mysql;
+package com.example.Smart_Education.repository.mysql.college;
 
-import com.example.Smart_Education.entity.Course;
+import com.example.Smart_Education.entity.college_entity.Course;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

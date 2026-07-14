@@ -1,6 +1,6 @@
 package com.example.Smart_Education.entity.student_entity;
 
-import com.example.Smart_Education.entity.Course;
+import com.example.Smart_Education.entity.college_entity.Course;
 import jakarta.persistence.*;
 import lombok.*;
 

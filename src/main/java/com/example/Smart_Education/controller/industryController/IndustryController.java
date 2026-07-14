@@ -2,16 +2,13 @@ package com.example.Smart_Education.controller.industryController;
 
 import com.example.Smart_Education.DTOs.industryDtoPackage.industryDTO.IndustryUpdateProfileDTO;
 import com.example.Smart_Education.service.industryService.IndustryService;
-import com.example.Smart_Education.service.internshipservice.InternshipService;
+import com.example.Smart_Education.service.industryService.internshipservice.InternshipService;
 import com.example.Smart_Education.service.studentSerivce.StudentService;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.example.Smart_Education.DTOs.industryDtoPackage.industryDTO.IndustryApplicationResponseDTO;
 import com.example.Smart_Education.entity.student_entity.Student;
-
-import java.util.List;
 
 
 @RestController

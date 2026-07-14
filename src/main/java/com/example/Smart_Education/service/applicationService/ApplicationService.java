@@ -1,6 +1,7 @@
 package com.example.Smart_Education.service.applicationService;
 
 import com.example.Smart_Education.DTOs.applicationDto.IndustryApplicationViewDTO;
+import com.example.Smart_Education.DTOs.applicationDto.InternshipApplicationDTO;
 import com.example.Smart_Education.DTOs.industryDtoPackage.industryDTO.IndustryApplicationResponseDTO;
 import com.example.Smart_Education.DTOs.applicationDto.ApplicationDTO;
 import com.example.Smart_Education.DTOs.applicationDto.StudentApplicationViewDTO;
@@ -126,6 +127,46 @@ public class ApplicationService {
                 .toList();
     }
 
+    /* Get all applications of student for the internship */
+    public List<InternshipApplicationDTO> getIndustryApplications () {
+        // 1. Get logged-in user (JWT)
+        String email = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
+        // 2. Find industry by email
+        Industry industry = industryRepository.findByUserEmail(email)
+                .orElseThrow(() -> new RuntimeException("Industry not found"));
+
+        //Get all application of industry internship
+        List<Application> applications = applicationRepository.findByInternship_Industry_Id(industry.getId());
+
+        // 3. Map to DTO
+        return applications.stream()
+                .map(application -> {
+                    Student student = application.getStudent();
+                    Internship internship = application.getInternship();
+
+                    return InternshipApplicationDTO.builder()
+                            .studentName(student.getName())
+                            .studentEmail(student.getUser().getEmail())
+                            .department(student.getDepartment())
+                            .collegeName(student.getCollegeName())
+                            .educationStatus(String.valueOf(student.getEducationStatus()))
+                            .applicationStatus(application.getStatus())
+                            .applicationId(application.getId())
+                            .location(application.getLocation())
+                            .resumeLink(application.getResumeLink()) // Assuming you want to include the resume file in the DTO
+                            .githubLink(application.getGithubLink())
+                            .linkedinLink(application.getLinkedinLink())
+                            .domain(internship.getDomain())
+                            .title(internship.getTitle())
+                            .build();
+                })
+                .toList();
+    }
+
+
 
     /* For the industry to get that student's applications who have applied */
     public List<IndustryApplicationViewDTO> getInternshipApplication(Long internshipId) {
@@ -148,7 +189,6 @@ public class ApplicationService {
         System.out.println("Logged user email: " + email);
         System.out.println("Industry: " + industry);
         System.out.println("Internship: " + internship);
-
 
         // 4. Get applications for the internship
         List<Application> applications = applicationRepository.findByInternshipId(internship.getId());

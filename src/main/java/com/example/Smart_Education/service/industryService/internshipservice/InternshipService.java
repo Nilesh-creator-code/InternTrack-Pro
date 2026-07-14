@@ -1,4 +1,4 @@
-package com.example.Smart_Education.service.internshipservice;
+package com.example.Smart_Education.service.industryService.internshipservice;
 
 import com.example.Smart_Education.DTOs.industryDtoPackage.internshipDTO.InternshipDetailDTO;
 import com.example.Smart_Education.DTOs.industryDtoPackage.internshipDTO.InternshipCreateDTO;

@@ -22,6 +22,11 @@ public class CollegeAuthController {
 
     private final AuthService authService;
 
+    @GetMapping("/ok")
+    public String getHello() {
+        return "Hello College api is OK";
+    }
+
     //1 They will send the otp
     @PostMapping("/send-otp")
     public ResponseEntity<?> sendOtp(@RequestParam String email) {
@@ -71,11 +76,13 @@ public class CollegeAuthController {
             @Valid @RequestBody LoginRequest request) {
 
         AuthResponse response = authService.login(request);
+        System.out.println("This for the api is coming or not");
 
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(response);
     }
+
 
     /* Forget password */
     @PostMapping("/forgot-password")
