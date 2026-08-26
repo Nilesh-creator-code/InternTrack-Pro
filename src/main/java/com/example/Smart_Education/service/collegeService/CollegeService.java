@@ -16,13 +16,13 @@ public class CollegeService {
     private CollegeRepository collegeRepository;
 
 
-
     /* Fetch a College by name */
     public College getCollegeByName(String name) {
         return collegeRepository.findByName(name)
                 .orElseThrow(() -> new RuntimeException(
                         "College with name " + name + " not found"));
     }
+
 
     /* Fetch all Colleges */
     public List<College> getAllColleges() {

@@ -58,6 +58,7 @@ public class CollegeAuthController {
                 .body(response);
     }
 
+
 //    3 register the college
     @PostMapping("/register")
     public ResponseEntity<String> registerCollege(

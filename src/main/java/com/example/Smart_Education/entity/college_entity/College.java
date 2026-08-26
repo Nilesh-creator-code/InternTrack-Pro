@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -34,6 +36,6 @@ public class College {
     private User user;
 
     @OneToMany(mappedBy = "college")
-    private Department department;
+    private List<Department> department;
 
 }

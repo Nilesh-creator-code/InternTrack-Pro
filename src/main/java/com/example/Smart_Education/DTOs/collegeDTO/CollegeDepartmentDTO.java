@@ -15,5 +15,7 @@ public class CollegeDepartmentDTO {
 
     @NotBlank(message = "Head of Department is required")
     private String headOfDepartment;
+
+    private Long collegeId;
     
 }
